@@ -4,10 +4,16 @@
    the PAIRING (student × opportunity), so the student's matches
    and the employer's matched candidates come from the same call.
 
-   London-only phase weights (see TRANSFERABLE_SKILLS_PLAN.md §1):
-   claimed skills 0.40 · transferable skills 0.20 · field 0.20 · hours 0.20.
-   A resume-inferred (transferable) skill is worth half a claimed one.
-   Location & preferences are intentionally not scored yet.
+   London-only phase (see TRANSFERABLE_SKILLS_PLAN.md §1):
+   skills 0.50 · field 0.25 · hours 0.25.
+
+   Transferable skills are folded INTO the skills dimension at half
+   credit (a resume-inferred skill is worth 0.5 of a claimed one), so:
+   (a) the engine still rewards transferable skills, AND
+   (b) a perfect direct match can still reach 100% — a separate
+       transferable weight would have capped every score below it.
+   The raw direct/transfer fractions are still reported separately for
+   the "why you match" breakdown.
    ============================================================ */
 
 import type { Student, Opportunity, ScoreResult } from "./types";
@@ -19,14 +25,13 @@ export interface ScoreContext {
 }
 
 const WEIGHTS = {
-  skills: 0.4,
-  transferable: 0.2,
-  field: 0.2,
-  hours: 0.2,
+  skills: 0.5,
+  field: 0.25,
+  hours: 0.25,
 };
 
-/** TRANSFER_CREDIT, made explicit: a transferable skill is worth this fraction
-    of a claimed one (0.20 / 0.40 = 0.5). Tune via the weights above. */
+/** A transferable (resume-inferred) skill counts as this fraction of a claimed one. */
+const TRANSFER_CREDIT = 0.5;
 
 export function score(
   student: Student,
@@ -37,13 +42,16 @@ export function score(
 
   // Claimed skills — full credit.
   const direct = required.filter((s) => student.skills.includes(s));
-  // Transferable skills — resume-inferred, counted only for required skills the
-  // student does NOT already claim (no double-counting).
+  // Transferable skills — only for required skills NOT already claimed (no double count).
   const transferableSet = new Set(student.transferableSkills ?? []);
   const transfer = required.filter((s) => !student.skills.includes(s) && transferableSet.has(s));
 
-  const skills = required.length ? direct.length / required.length : 0;
-  const transferable = required.length ? transfer.length / required.length : 0;
+  // Combined skills score (drives the total); raw fractions kept for display.
+  const skillsRaw = required.length ? direct.length / required.length : 0;
+  const transferableRaw = required.length ? transfer.length / required.length : 0;
+  const skillsCombined = required.length
+    ? Math.min(1, (direct.length + TRANSFER_CREDIT * transfer.length) / required.length)
+    : 0;
 
   // Field / program fit.
   const field = fieldAffinity(student.field, opportunity.field);
@@ -55,13 +63,10 @@ export function score(
       : student.hoursRequired;
   const hours = Math.max(0, Math.min(1, opportunity.hoursOffered / remaining));
 
-  const dimensions = { skills, transferable, field, hours };
+  // Reported dimensions (raw, 0–1) for the detail-page breakdown.
+  const dimensions = { skills: skillsRaw, transferable: transferableRaw, field, hours };
 
-  const total =
-    skills * WEIGHTS.skills +
-    transferable * WEIGHTS.transferable +
-    field * WEIGHTS.field +
-    hours * WEIGHTS.hours;
+  const total = skillsCombined * WEIGHTS.skills + field * WEIGHTS.field + hours * WEIGHTS.hours;
 
   return {
     score: Math.round(total * 100),
@@ -104,17 +109,15 @@ function buildReasons(
   ];
 
   // Transferable skills — surface when the resume covers skills the student
-  // didn't claim. This is the differentiator, so give it a slight nudge so it
-  // shows even when its raw weight ties with hours.
+  // didn't claim. This is the differentiator, so give it a slight nudge.
   if (transfer.length > 0) {
     parts.push({
       text: `+${transfer.length} from experience`,
-      weight: dimensions.transferable * WEIGHTS.transferable + 0.001,
+      weight: dimensions.transferable * WEIGHTS.skills * TRANSFER_CREDIT + 0.06,
     });
   }
 
-  // Only surface an hours reason when it's a genuinely distinguishing signal —
-  // i.e. the opportunity is "right-sized" for the remaining gap (not 5× too big).
+  // Only surface an hours reason when it's a genuinely distinguishing signal.
   const rightSized = remaining > 0 && opportunity.hoursOffered <= remaining * 2;
   if (rightSized) {
     const hoursText =

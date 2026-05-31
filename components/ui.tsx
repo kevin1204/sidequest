@@ -83,12 +83,11 @@ export function Icon({
 
 /* ---------- Logo ---------- */
 export function LogoMark({ size = 30 }: { size?: number }) {
+  // SideQuest interlocking monogram — brand asset in /public.
+  // Image aspect ≈ 154:199 (0.77); height drives the size, width follows.
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
-      <rect x="2" y="2" width="18" height="18" rx="6" fill="var(--tl-600)" />
-      <rect x="12" y="12" width="18" height="18" rx="6" fill="var(--teal)" fillOpacity="0.92" />
-      <rect x="12" y="12" width="8" height="8" rx="3" fill="#0c1322" fillOpacity="0.16" />
-    </svg>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/sidequest-logo.png" alt="" aria-hidden style={{ height: size, width: "auto", display: "block" }} />
   );
 }
 

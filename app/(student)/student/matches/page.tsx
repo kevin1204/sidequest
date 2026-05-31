@@ -7,7 +7,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Icon, CoTile, MatchBadge, ReasonLine, SkillMatch, EmptyState, PageHead } from "@/components/ui";
+import { Icon, CoTile, MatchBadge, ReasonLine, SkillMatch, EmptyState } from "@/components/ui";
 import { useStore } from "@/lib/store/StoreProvider";
 import {
   matchesForStudent,
@@ -17,8 +17,15 @@ import {
   remainingHours,
   currentStudent,
 } from "@/lib/store/selectors";
-import { getCompanyColor } from "@/lib/taxonomies";
+import { getCompanyColor, APP_STATUS_LABEL, APP_STATUS_ORDER } from "@/lib/taxonomies";
 import type { MatchVM } from "@/lib/types";
+
+const STATUS_DOT: Record<string, string> = {
+  interested: "var(--muted-2)",
+  shortlisted: "var(--amber)",
+  accepted: "var(--tl-600)",
+  active: "var(--green)",
+};
 
 function MatchCard({
   m,
@@ -248,7 +255,7 @@ function HoursHero({ onPlanner }: { onPlanner: () => void }) {
           {placements.map((p) => (
             <div key={p.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
               <span style={{ display: "flex", alignItems: "center", gap: 9, color: "#fff", fontSize: 13.5, fontWeight: 600, minWidth: 0 }}>
-                <span className="dot" style={{ width: 9, height: 9, background: getCompanyColor(p.company), flex: "none", boxShadow: "0 0 0 2px rgba(255,255,255,.25)" }} />
+                <span className="dot legend-dot" style={{ width: 10, height: 10, background: getCompanyColor(p.company), flex: "none" }} />
                 <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.company}</span>
               </span>
               <span className="tnum" style={{ color: "rgba(255,255,255,.85)", fontWeight: 700, fontSize: 13.5, flex: "none", whiteSpace: "nowrap" }}>
@@ -283,65 +290,133 @@ export default function MatchesPage() {
   const showTop = filter === "all" && sort === "match" && !!topPick;
   const gridList = showTop ? list.filter((m) => m.opportunity.id !== topPick.opportunity.id) : list;
 
+  // Rail data
+  const apps = state.applications.filter((a) => a.studentId === sid);
+  const pending = pendingHours(state, sid);
+  const strength = currentStudent(state).profileStrength;
+
   const open = (id: string) => router.push(`/student/opportunity/${id}`);
 
   return (
-    <div className="page">
+    <div className="page page-wide">
       <HoursHero onPlanner={() => router.push("/student/planner")} />
 
-      <div style={{ marginTop: 30 }}>
-        <PageHead kicker="Your matches" title="Opportunities ranked for you" sub={`${all.length} placements in London matched to your profile`} />
-
-        {showTop && (
-          <div style={{ marginBottom: 18 }}>
-            <TopPick m={topPick} requiredHours={requiredHours} onInterest={expressInterest} onOpen={open} />
+      <div className="dash-grid" style={{ marginTop: 26 }}>
+        {/* MAIN — matches */}
+        <div>
+          <div style={{ marginBottom: 16 }}>
+            <div className="eyebrow" style={{ marginBottom: 6 }}>Your matches</div>
+            <h2 className="display dash-title">Opportunities ranked for you</h2>
+            <p style={{ color: "var(--muted)", marginTop: 6, fontSize: 14.5 }}>
+              {all.length} placements in London matched to your profile
+            </p>
           </div>
-        )}
 
-        <div className="match-toolbar">
-          <div className="seg seg-wrap">
-            {([
-              ["all", "All"],
-              ["field", "In my field"],
-              ["big", "120+ hrs"],
-              ["fits", "Fits my remaining hours"],
-            ] as const).map(([k, l]) => (
-              <button key={k} className={`seg-btn ${filter === k ? "on" : ""}`} onClick={() => setFilter(k)}>
-                {l}
-              </button>
-            ))}
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-            <span className="hint hide-sm">Sort by</span>
-            <div className="seg">
-              <button className={`seg-btn ${sort === "match" ? "on" : ""}`} onClick={() => setSort("match")}>
-                Match
-              </button>
-              <button className={`seg-btn ${sort === "hours" ? "on" : ""}`} onClick={() => setSort("hours")}>
-                Hours
-              </button>
+          {showTop && (
+            <div style={{ marginBottom: 18 }}>
+              <TopPick m={topPick} requiredHours={requiredHours} onInterest={expressInterest} onOpen={open} />
+            </div>
+          )}
+
+          <div className="match-toolbar">
+            <div className="seg seg-wrap">
+              {([
+                ["all", "All"],
+                ["field", "In my field"],
+                ["big", "120+ hrs"],
+                ["fits", "Fits my remaining hours"],
+              ] as const).map(([k, l]) => (
+                <button key={k} className={`seg-btn ${filter === k ? "on" : ""}`} onClick={() => setFilter(k)}>
+                  {l}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+              <span className="hint hide-sm">Sort by</span>
+              <div className="seg">
+                <button className={`seg-btn ${sort === "match" ? "on" : ""}`} onClick={() => setSort("match")}>
+                  Match
+                </button>
+                <button className={`seg-btn ${sort === "hours" ? "on" : ""}`} onClick={() => setSort("hours")}>
+                  Hours
+                </button>
+              </div>
             </div>
           </div>
+
+          {gridList.length === 0 ? (
+            <EmptyState
+              icon="search"
+              title="No matches with these filters"
+              body="Try widening your filters — or update your skills and required hours on your profile to surface more London placements."
+              ctaLabel="Clear filters"
+              onCta={() => {
+                setFilter("all");
+                setSort("match");
+              }}
+            />
+          ) : (
+            <div className="match-grid match-grid-rail">
+              {gridList.map((m) => (
+                <MatchCard key={m.opportunity.id} m={m} requiredHours={requiredHours} remaining={remaining} onInterest={expressInterest} onOpen={open} />
+              ))}
+            </div>
+          )}
         </div>
 
-        {gridList.length === 0 ? (
-          <EmptyState
-            icon="search"
-            title="No matches with these filters"
-            body="Try widening your filters — or update your skills and required hours on your profile to surface more London placements."
-            ctaLabel="Clear filters"
-            onCta={() => {
-              setFilter("all");
-              setSort("match");
-            }}
-          />
-        ) : (
-          <div className="match-grid">
-            {gridList.map((m) => (
-              <MatchCard key={m.opportunity.id} m={m} requiredHours={requiredHours} remaining={remaining} onInterest={expressInterest} onOpen={open} />
-            ))}
+        {/* RAIL — applications, certificate, profile */}
+        <div className="dash-rail">
+          <div className="rail-card">
+            <div className="rail-head">
+              <Icon name="heart" size={16} style={{ color: "var(--primary)" }} /> Your applications
+            </div>
+            {apps.length === 0 ? (
+              <p className="hint">Express interest in a role to start your pipeline.</p>
+            ) : (
+              APP_STATUS_ORDER.map((s) => {
+                const n = apps.filter((a) => a.status === s).length;
+                if (n === 0) return null;
+                return (
+                  <div key={s} className="rail-pipe">
+                    <span style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, color: "var(--ink-2)" }}>
+                      <span className="dot" style={{ background: STATUS_DOT[s] }} /> {APP_STATUS_LABEL[s]}
+                    </span>
+                    <b className="tnum">{n}</b>
+                  </div>
+                );
+              })
+            )}
+            <button className="btn btn-ghost btn-block btn-sm" style={{ marginTop: 10 }} onClick={() => router.push("/student/applications")}>
+              View all applications
+            </button>
           </div>
-        )}
+
+          <div className="rail-card teal">
+            <div className="rail-head" style={{ color: "#fff" }}>
+              <Icon name="award" size={16} style={{ color: "#7fe0d2" }} /> Almost certified
+            </div>
+            <p style={{ color: "rgba(255,255,255,.88)", fontSize: 13.5, lineHeight: 1.5 }}>
+              <b style={{ color: "#fff" }}>{remaining} hours to go</b>
+              {pending > 0 && ` · ${pending} pending approval`} until your completion certificate.
+            </p>
+            <button className="btn btn-onteal btn-block btn-sm" style={{ marginTop: 14 }} onClick={() => router.push("/student/hours")}>
+              <Icon name="clock" size={15} /> Track my hours
+            </button>
+          </div>
+
+          <div className="rail-card">
+            <div className="rail-head">
+              <Icon name="user" size={16} style={{ color: "var(--primary)" }} /> Profile strength
+            </div>
+            <div className="bar" style={{ marginBottom: 8 }}>
+              <div className="bar-seg" style={{ width: `${strength}%`, background: "var(--primary)" }} />
+            </div>
+            <p className="hint">{strength}% complete — add skills &amp; certifications to rank higher.</p>
+            <button className="btn btn-ghost btn-block btn-sm" style={{ marginTop: 12 }} onClick={() => router.push("/student/profile")}>
+              Improve my profile
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,434 @@
+/* ============================================================
+   SideQuest — student landing redesign (scoped under .sqland)
+   Ported from the /sidequest design. EVERY selector is namespaced
+   so the design's generic class names (.btn, .eyebrow, .tag, .dot,
+   .legend, .score, .step, .match-card, .plan…) never collide with
+   the app's global design system in globals.css.
+   Fonts come from next/font variables set in app/layout.tsx.
+   ============================================================ */
+
+.sqland {
+  /* greens */
+  --green: #1e7c6b;
+  --green-600: #1a6f60;
+  --green-700: #155a4e;
+  --green-deep: #0f4d42;
+  --green-darker: #0b3a31;
+  --ink: #112a23;
+  --body: #4f5e58;
+  --muted: #7d8a84;
+  /* surfaces */
+  --bg: #ffffff;
+  --mint: #ecf7f5;
+  --mint-2: #f1f8f5;
+  --cream: #fbf3de;
+  --paper: #fcfdfc;
+  /* accents */
+  --amber: #b87513;
+  --amber-soft: #f3e6c8;
+  --amber-text: #a4640f;
+  /* lines */
+  --line: rgba(17, 42, 35, .10);
+  --line-strong: rgba(17, 42, 35, .16);
+  /* business brand colors */
+  --c-forest: #1e7c6b;
+  --c-thames: #7c5cfc;
+  --c-northern: #e08a2b;
+  --c-riverbend: #e0457b;
+  --c-innovation: #3b82c4;
+  --c-powerhouse: #d6493b;
+  /* type — wired to next/font variables (layout.tsx) */
+  --serif: var(--font-source-serif), 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --sans: var(--font-hanken), 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  /* shape */
+  --r-sm: 10px;
+  --r: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+  --shadow-sm: 0 1px 2px rgba(17, 42, 35, .05), 0 1px 1px rgba(17, 42, 35, .04);
+  --shadow: 0 18px 40px -22px rgba(17, 42, 35, .30), 0 4px 12px -6px rgba(17, 42, 35, .12);
+  --shadow-lg: 0 40px 80px -40px rgba(11, 58, 49, .45), 0 8px 24px -12px rgba(17, 42, 35, .18);
+  --maxw: 1200px;
+
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.sqland img { max-width: 100%; display: block; }
+.sqland a { color: inherit; text-decoration: none; }
+.sqland button { font-family: inherit; cursor: pointer; }
+
+/* ---------- layout helpers ---------- */
+.sqland .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
+.sqland .section { padding: 92px 0; }
+.sqland section { position: relative; }
+
+/* ---------- type ---------- */
+.sqland .serif { font-family: var(--serif); }
+.sqland h1, .sqland h2, .sqland h3 { font-family: var(--serif); color: var(--ink); margin: 0; letter-spacing: -.01em; font-weight: 600; }
+.sqland h1 { font-size: clamp(44px, 5.6vw, 78px); line-height: 1.02; letter-spacing: -.02em; }
+.sqland h2 { font-size: clamp(34px, 3.8vw, 52px); line-height: 1.05; }
+.sqland h3 { font-size: 20px; line-height: 1.2; }
+.sqland .eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--green); }
+.sqland .eyebrow svg { width: 17px; height: 17px; }
+
+/* ---------- buttons ---------- */
+.sqland .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  font-weight: 600; font-size: 16px; border: 1px solid transparent; border-radius: 13px;
+  padding: 14px 22px; transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+  white-space: nowrap;
+}
+.sqland .btn { cursor: pointer; }
+.sqland .btn svg { width: 18px; height: 18px; }
+.sqland .btn-primary { background: var(--green); color: #fff; box-shadow: 0 10px 22px -12px rgba(30, 124, 107, .8); }
+.sqland .btn-primary:hover { background: var(--green-600); transform: translateY(-1px); }
+.sqland .btn-ghost { background: #fff; color: var(--ink); border-color: var(--line-strong); box-shadow: var(--shadow-sm); }
+.sqland .btn-ghost:hover { border-color: var(--green); color: var(--green); transform: translateY(-1px); }
+.sqland .btn-white { background: #fff; color: var(--green-deep); }
+.sqland .btn-white:hover { transform: translateY(-1px); box-shadow: 0 14px 30px -16px rgba(0, 0, 0, .45); }
+.sqland .btn-ondark { background: rgba(255, 255, 255, .12); color: #fff; border-color: rgba(255, 255, 255, .22); }
+.sqland .btn-ondark:hover { background: rgba(255, 255, 255, .2); }
+.sqland .btn-sm { padding: 10px 16px; font-size: 14px; border-radius: 11px; }
+
+/* ---------- NAV ---------- */
+.sqland .nav { position: sticky; top: 0; z-index: 60; background: rgba(255, 255, 255, .82); backdrop-filter: blur(14px); border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
+.sqland .nav.scrolled { border-color: var(--line); box-shadow: 0 6px 20px -18px rgba(17, 42, 35, .5); }
+.sqland .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 74px; }
+.sqland .brand { display: flex; align-items: center; gap: 11px; font-weight: 700; font-size: 21px; letter-spacing: -.01em; }
+.sqland .brand .word b { color: var(--green); font-weight: 700; }
+.sqland .brand .word { color: var(--ink); font-weight: 700; }
+.sqland .logo-img { height: 30px; width: auto; display: block; flex: none; }
+.sqland .logo-mark { position: relative; width: 30px; height: 30px; flex: none; }
+.sqland .logo-mark i { position: absolute; width: 18px; height: 18px; border-radius: 7px; }
+.sqland .logo-mark i:first-child { left: 0; top: 0; background: var(--green-deep); }
+.sqland .logo-mark i:last-child { right: 0; bottom: 0; background: #46b39a; mix-blend-mode: multiply; }
+.sqland .nav-seg { display: flex; background: #f0f4f2; border: 1px solid var(--line); border-radius: 999px; padding: 5px; gap: 2px; }
+.sqland .nav-seg a { padding: 8px 18px; border-radius: 999px; font-weight: 600; font-size: 15px; color: var(--muted); white-space: nowrap; }
+.sqland .nav-seg a.active { background: #fff; color: var(--green); box-shadow: var(--shadow-sm); }
+.sqland .nav-right { display: flex; align-items: center; gap: 20px; }
+.sqland .nav-right .login { font-weight: 600; color: var(--ink); white-space: nowrap; }
+.sqland .nav-right .login:hover { color: var(--green); }
+
+/* ---------- HERO ---------- */
+.sqland .hero { padding: 64px 0 86px; background:
+  radial-gradient(1100px 520px at 88% -8%, #dff0ec 0%, rgba(223, 240, 236, 0) 60%),
+  linear-gradient(180deg, #f4faf8 0%, #ffffff 70%); }
+.sqland .hero-grid { display: grid; grid-template-columns: 1.04fr .96fr; gap: 56px; align-items: center; }
+.sqland .pill-quest { display: inline-flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--amber-soft); border-radius: 999px; padding: 7px 8px 7px 18px; font-weight: 600; font-size: 15px; color: var(--ink); box-shadow: var(--shadow-sm); }
+.sqland .pill-quest .xp { display: inline-flex; align-items: center; gap: 5px; background: var(--cream); color: var(--amber-text); font-weight: 700; border-radius: 999px; padding: 4px 11px; font-size: 13px; }
+.sqland .pill-quest .xp svg { width: 14px; height: 14px; }
+.sqland .hero h1 { margin: 24px 0 0; }
+.sqland .hero h1 .accent { color: var(--green); }
+.sqland .hero-lede { margin: 22px 0 0; font-size: 19px; color: var(--body); line-height: 1.6; max-width: 46ch; }
+.sqland .hero-cta { display: flex; gap: 14px; margin-top: 34px; flex-wrap: wrap; }
+.sqland .hero-stats { display: flex; gap: 0; margin-top: 42px; border-top: 1px solid var(--line); padding-top: 24px; }
+.sqland .hero-stats .stat { padding-right: 30px; }
+.sqland .hero-stats .stat + .stat { padding-left: 30px; border-left: 1px solid var(--line); }
+.sqland .hero-stats .num { font-family: var(--serif); font-weight: 700; font-size: 28px; color: var(--ink); line-height: 1; }
+.sqland .hero-stats .lbl { font-size: 13.5px; color: var(--muted); margin-top: 7px; }
+
+/* ---------- product card (shared dashboard look) ---------- */
+.sqland .card-ui { background: #fff; border: 1px solid var(--line); border-radius: var(--r-xl); box-shadow: var(--shadow-lg); }
+.sqland .ui-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.sqland .ui-title { font-weight: 700; font-size: 18px; color: var(--ink); }
+.sqland .ui-sub { font-size: 13.5px; color: var(--muted); margin-top: 3px; }
+.sqland .chip-unlocked { display: inline-flex; align-items: center; gap: 7px; background: #e3f3ec; color: #1c6b4e; font-weight: 600; font-size: 13px; padding: 7px 13px; border-radius: 999px; white-space: nowrap; }
+.sqland .chip-unlocked svg { width: 15px; height: 15px; }
+.sqland .bignum { font-family: var(--serif); font-weight: 700; font-size: 54px; color: var(--green); line-height: 1; }
+.sqland .bignum small { font-family: var(--sans); font-weight: 600; font-size: 18px; color: var(--muted); }
+.sqland .stackbar { display: flex; height: 13px; border-radius: 999px; overflow: hidden; background: #eef1f0; }
+.sqland .stackbar span { display: block; height: 100%; }
+.sqland .legend { list-style: none; margin: 0; padding: 0; }
+.sqland .legend li { display: flex; align-items: center; gap: 11px; padding: 11px 0; font-size: 15px; border-top: 1px solid var(--line); }
+.sqland .legend li:first-child { border-top: 0; }
+.sqland .legend .dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.sqland .legend .nm { font-weight: 500; color: var(--ink); }
+.sqland .legend .hrs { margin-left: auto; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.sqland .legend .status { font-size: 12px; font-weight: 600; color: #1c6b4e; background: #e8f4ee; border-radius: 999px; padding: 3px 9px; margin-left: 12px; }
+.sqland .ui-foot { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: var(--green-700); font-weight: 500; }
+.sqland .ui-foot svg { width: 17px; height: 17px; }
+
+/* fuller hero dashboard extras */
+.sqland .dash-window { padding: 0; overflow: hidden; }
+.sqland .dash-bar { display: flex; align-items: center; gap: 7px; padding: 13px 18px; border-bottom: 1px solid var(--line); background: var(--paper); }
+.sqland .dash-bar i { width: 10px; height: 10px; border-radius: 50%; background: #dfe5e2; }
+.sqland .dash-bar i:nth-child(1) { background: #e9b8b0; }
+.sqland .dash-bar i:nth-child(2) { background: #f0d8a8; }
+.sqland .dash-bar i:nth-child(3) { background: #bfe0c8; }
+.sqland .dash-bar span { margin-left: 8px; font-size: 12.5px; color: var(--muted); font-weight: 500; }
+.sqland .dash-body { padding: 24px 24px 22px; }
+.sqland .profile-row { display: flex; align-items: center; gap: 13px; margin-bottom: 18px; }
+.sqland .avatar-sm { width: 44px; height: 44px; border-radius: 13px; object-fit: cover; flex: none; box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--line); }
+.sqland .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0; }
+.sqland .tile { background: var(--mint-2); border: 1px solid var(--line); border-radius: 14px; padding: 13px 13px; }
+.sqland .tile .t-num { font-family: var(--serif); font-weight: 700; font-size: 23px; color: var(--ink); line-height: 1; }
+.sqland .tile .t-lbl { font-size: 12px; color: var(--muted); margin-top: 6px; font-weight: 500; line-height: 1.25; }
+.sqland .tile.accent { background: #e9f5ef; border-color: #cfe8db; }
+.sqland .tile.accent .t-num { color: var(--green); }
+
+/* simple summary card (signature feature) */
+.sqland .card-summary { padding: 26px 26px 24px; }
+
+/* ---------- STATS STRIP (dark) ---------- */
+.sqland .strip { background: linear-gradient(120deg, var(--green-deep) 0%, var(--green) 100%); color: #fff; padding: 40px 0; }
+.sqland .strip-top { display: flex; align-items: center; gap: 34px; flex-wrap: wrap; }
+.sqland .strip .big { font-family: var(--serif); font-weight: 700; font-size: 40px; line-height: 1; }
+.sqland .strip .big small { display: block; font-family: var(--sans); font-weight: 500; font-size: 14.5px; color: rgba(255, 255, 255, .78); margin-top: 8px; }
+.sqland .strip-div { width: 1px; align-self: stretch; background: rgba(255, 255, 255, .22); }
+.sqland .strip-hood h4 { margin: 0 0 14px; font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .78); font-family: var(--sans); }
+.sqland .hoods { display: flex; flex-wrap: wrap; gap: 10px; }
+.sqland .hood { background: rgba(255, 255, 255, .10); border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px; padding: 8px 16px; font-weight: 600; font-size: 14.5px; }
+.sqland .strip-rule { height: 1px; background: rgba(255, 255, 255, .16); margin: 28px 0 22px; }
+.sqland .trust { display: flex; align-items: center; gap: 26px 30px; flex-wrap: wrap; }
+.sqland .trust .lab { font-size: 14.5px; color: rgba(255, 255, 255, .72); font-weight: 500; }
+.sqland .biz { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; }
+.sqland .biz .bm { width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: 700; flex: none; }
+
+/* ---------- HOW IT WORKS ---------- */
+.sqland .split-head { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: end; margin-bottom: 46px; }
+.sqland .split-head .intro { color: var(--body); font-size: 18px; line-height: 1.6; padding-bottom: 6px; }
+.sqland .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.sqland .step { background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 26px; position: relative; transition: transform .18s ease, box-shadow .2s ease, border-color .2s; }
+.sqland .step:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: #cfe3da; }
+.sqland .step-ico { width: 48px; height: 48px; border-radius: 14px; background: var(--mint); display: flex; align-items: center; justify-content: center; color: var(--green); }
+.sqland .step-ico svg { width: 24px; height: 24px; }
+.sqland .step .no { position: absolute; top: 24px; right: 26px; font-family: var(--serif); font-weight: 700; font-size: 34px; color: #e7ede9; }
+.sqland .step h3 { margin: 22px 0 10px; }
+.sqland .step p { margin: 0; color: var(--body); font-size: 15.5px; line-height: 1.55; }
+
+/* ---------- FRAMEWORK (mint contrast block) ---------- */
+.sqland .framework { background: linear-gradient(180deg, #eef7f3 0%, #f3f9f6 100%); }
+.sqland .fw-head { max-width: 760px; margin-bottom: 42px; }
+.sqland .fw-head h2 { margin: 18px 0 18px; }
+.sqland .fw-head p { color: var(--body); font-size: 18px; line-height: 1.6; max-width: 56ch; }
+.sqland .fw-grid { display: grid; grid-template-columns: 1.12fr .88fr; gap: 34px; align-items: start; }
+.sqland .reasons { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.sqland .reason { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 22px; }
+.sqland .reason.feature { border-color: #9fd3c2; box-shadow: 0 0 0 1px #c3e6da, var(--shadow); }
+.sqland .reason-ico { width: 42px; height: 42px; border-radius: 12px; background: var(--mint); display: flex; align-items: center; justify-content: center; color: var(--green); }
+.sqland .reason-ico svg { width: 21px; height: 21px; }
+.sqland .reason h3 { font-size: 18px; margin: 16px 0 8px; }
+.sqland .reason p { margin: 0; font-size: 14.5px; color: var(--body); line-height: 1.5; }
+.sqland .reason .tag { display: inline-block; margin-top: 14px; background: var(--green-deep); color: #fff; font-size: 12.5px; font-weight: 600; padding: 6px 13px; border-radius: 999px; }
+.sqland .fw-note { margin-top: 26px; display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 16px 20px; font-size: 15px; color: var(--body); }
+.sqland .fw-note svg { width: 20px; height: 20px; color: var(--green); flex: none; }
+
+/* match-results product mockup */
+.sqland .match-card { position: sticky; top: 96px; }
+.sqland .match-head { padding: 18px 20px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 11px; background: var(--paper); border-radius: var(--r-xl) var(--r-xl) 0 0; }
+.sqland .match-head .mh-ico { width: 34px; height: 34px; border-radius: 10px; background: var(--green); color: #fff; display: flex; align-items: center; justify-content: center; }
+.sqland .match-head .mh-ico svg { width: 18px; height: 18px; }
+.sqland .match-head b { font-size: 14.5px; }
+.sqland .match-head .mh-sub { font-size: 12.5px; color: var(--muted); }
+.sqland .match-body { padding: 22px 22px 24px; }
+.sqland .match-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.sqland .match-role { font-family: var(--serif); font-weight: 700; font-size: 21px; color: var(--ink); line-height: 1.15; }
+.sqland .match-meta { font-size: 13.5px; color: var(--muted); margin-top: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.sqland .match-meta .biz-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c-northern); }
+.sqland .score { text-align: center; flex: none; }
+.sqland .score .ring { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: conic-gradient(var(--green) 0 94%, #e7eee9 94% 100%); }
+.sqland .score .ring b { width: 50px; height: 50px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-weight: 700; font-size: 18px; color: var(--green); }
+.sqland .score .s-lbl { font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 6px; text-transform: uppercase; letter-spacing: .08em; }
+.sqland .why-lbl { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 22px 0 12px; }
+.sqland .why { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.sqland .why li { display: flex; align-items: center; gap: 12px; background: var(--mint-2); border: 1px solid var(--line); border-radius: 13px; padding: 11px 13px; }
+.sqland .why .w-ico { width: 30px; height: 30px; border-radius: 9px; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--green); flex: none; }
+.sqland .why .w-ico svg { width: 16px; height: 16px; }
+.sqland .why .w-main { font-size: 14px; font-weight: 600; color: var(--ink); }
+.sqland .why .w-sub { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+.sqland .why .w-pill { margin-left: auto; font-size: 11.5px; font-weight: 700; padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
+.sqland .w-pill.hi { background: #e3f3ec; color: #1c6b4e; }
+.sqland .w-pill.counted { background: var(--cream); color: var(--amber-text); }
+.sqland .w-pill.fit { background: #eef0fe; color: #5b46c9; }
+.sqland .w-pill.hours { background: #fdeef4; color: #bf3a6e; }
+.sqland .match-actions { display: flex; gap: 11px; margin-top: 20px; }
+.sqland .match-actions .btn { flex: 1; }
+
+/* ---------- SIGNATURE FEATURE ---------- */
+.sqland .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.sqland .sig h2 { margin: 18px 0 20px; }
+.sqland .sig p.body { color: var(--body); font-size: 18px; line-height: 1.62; max-width: 46ch; }
+.sqland .sig-list { list-style: none; margin: 26px 0 30px; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.sqland .sig-list li { display: flex; align-items: center; gap: 14px; font-size: 16px; color: var(--ink); font-weight: 500; }
+.sqland .sig-list .li-ico { width: 38px; height: 38px; border-radius: 11px; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--green); flex: none; box-shadow: var(--shadow-sm); }
+.sqland .sig-list .li-ico svg { width: 19px; height: 19px; }
+
+/* ---------- TESTIMONIALS ---------- */
+.sqland .tcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: start; }
+.sqland .tcard { background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 26px; box-shadow: var(--shadow-sm); }
+.sqland .tcard.feature { background: linear-gradient(160deg, var(--green) 0%, var(--green-deep) 100%); color: #fff; border: 0; box-shadow: var(--shadow); }
+.sqland .tcard .stars { display: flex; gap: 3px; color: #e9a52a; margin-bottom: 14px; }
+.sqland .tcard .stars svg { width: 18px; height: 18px; }
+.sqland .tcard .quote-mark { font-family: var(--serif); font-size: 46px; line-height: .4; color: var(--green); opacity: .5; display: block; height: 24px; }
+.sqland .tcard.feature .quote-mark { color: rgba(255, 255, 255, .6); opacity: 1; }
+.sqland .tcard p.quote { font-size: 16px; line-height: 1.55; color: var(--ink); margin: 14px 0 22px; }
+.sqland .tcard.feature p.quote { color: #fff; font-size: 17px; }
+.sqland .tcard .person { display: flex; align-items: center; gap: 13px; }
+.sqland .tcard .ava { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; flex: none; box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(30, 124, 107, .18); }
+.sqland .tcard.feature .ava { box-shadow: 0 0 0 2px rgba(255, 255, 255, .55), 0 0 0 4px rgba(255, 255, 255, .18); }
+.sqland .tcard .who b { font-weight: 700; font-size: 15.5px; display: block; }
+.sqland .tcard .who span { font-size: 13.5px; color: var(--muted); }
+.sqland .tcard.feature .who span { color: rgba(255, 255, 255, .78); }
+
+/* ---------- PRICING ---------- */
+.sqland .pricing { background: linear-gradient(180deg, #f9fdfb 0%, #f2f8f5 100%); }
+.sqland .price-head { text-align: center; max-width: 680px; margin: 0 auto 52px; }
+.sqland .price-head h2 { margin: 18px 0 16px; }
+.sqland .price-head p { color: var(--body); font-size: 18px; line-height: 1.6; }
+.sqland .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; margin: 0 auto; align-items: start; }
+.sqland .plan {
+  padding: 36px 36px 34px;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-xl);
+  box-shadow: 0 2px 8px -4px rgba(17, 42, 35, .08), 0 1px 2px rgba(17, 42, 35, .04);
+  transition: transform .22s ease, box-shadow .25s ease, border-color .2s;
+}
+.sqland .plan:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #cfe3da; }
+.sqland .plan.plus {
+  background: linear-gradient(160deg, #fffaf3 0%, #fffcf7 55%, #fff 100%);
+  position: relative;
+  border-color: rgba(184, 117, 19, .30);
+  box-shadow: 0 0 0 4px rgba(184, 117, 19, .06), 0 8px 24px -12px rgba(184, 117, 19, .22), 0 2px 6px -2px rgba(17, 42, 35, .08);
+}
+.sqland .plan.plus::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(600px 180px at 50% -10%, rgba(184, 117, 19, .09), transparent 65%);
+  pointer-events: none;
+}
+.sqland .plan.plus:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 0 4px rgba(184, 117, 19, .08), 0 20px 40px -16px rgba(184, 117, 19, .28), 0 4px 12px -4px rgba(17, 42, 35, .10);
+}
+.sqland .plan-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sqland .plan-name { font-weight: 700; font-size: 20px; }
+.sqland .plan-name .pl { color: var(--amber); }
+.sqland .badge-pop { display: inline-flex; align-items: center; gap: 6px; background: var(--amber); color: #fff; font-weight: 700; font-size: 12.5px; padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+.sqland .badge-pop svg { width: 13px; height: 13px; }
+.sqland .price { display: flex; align-items: baseline; gap: 8px; margin: 20px 0 4px; }
+.sqland .price .amt { font-family: var(--serif); font-weight: 700; font-size: 48px; color: var(--ink); line-height: 1; }
+.sqland .price .per { font-size: 15px; color: var(--muted); font-weight: 500; }
+.sqland .plan .sub { font-size: 14.5px; color: var(--body); margin: 8px 0 22px; line-height: 1.45; }
+.sqland .plan.plus .sub { color: var(--amber-text); font-weight: 600; }
+.sqland .feat { list-style: none; margin: 0 0 28px; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.sqland .feat li { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--ink); }
+.sqland .feat .fk { width: 22px; height: 22px; border-radius: 7px; background: #e7f3ed; color: var(--green); display: flex; align-items: center; justify-content: center; flex: none; }
+.sqland .feat .fk.amber { background: var(--cream); color: var(--amber-text); }
+.sqland .feat .fk.off { background: #f0f1f0; color: #aab2ad; }
+.sqland .feat li.muted { color: var(--muted); }
+.sqland .feat svg { width: 14px; height: 14px; }
+.sqland .plan .btn { width: 100%; }
+.sqland .plan-divider { height: 1px; background: var(--line); margin: 0 0 22px; }
+
+/* ---------- SCHOOL BAND ---------- */
+.sqland .school { padding: 18px 0 92px; }
+.sqland .school-card { background:
+  radial-gradient(700px 380px at 88% 120%, rgba(70, 179, 154, .30), rgba(70, 179, 154, 0) 60%),
+  linear-gradient(150deg, var(--green-deep) 0%, var(--green-darker) 100%);
+  color: #fff; border-radius: var(--r-xl); padding: 46px 48px; display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; }
+.sqland .school-badge { display: inline-flex; align-items: center; gap: 9px; background: rgba(255, 255, 255, .10); border: 1px solid rgba(255, 255, 255, .18); border-radius: 999px; padding: 7px 15px; font-weight: 600; font-size: 13.5px; }
+.sqland .school-badge .led { width: 8px; height: 8px; border-radius: 50%; background: #5fd3b6; box-shadow: 0 0 0 4px rgba(95, 211, 182, .25); }
+.sqland .school-card h2 { color: #fff; margin: 20px 0 16px; }
+.sqland .school-card h2 em { font-style: italic; color: #bfeede; }
+.sqland .school-card p { color: rgba(255, 255, 255, .82); font-size: 16.5px; line-height: 1.6; max-width: 46ch; }
+.sqland .school-card .mini { display: flex; gap: 24px; margin-top: 22px; flex-wrap: wrap; }
+.sqland .school-card .mini span { display: flex; align-items: center; gap: 9px; font-size: 14.5px; color: rgba(255, 255, 255, .92); font-weight: 500; }
+.sqland .school-card .mini svg { width: 17px; height: 17px; color: #7fe0c4; }
+.sqland .school-form { background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .14); border-radius: var(--r-lg); padding: 24px; }
+.sqland .school-form label { font-weight: 700; font-size: 14.5px; display: block; margin-bottom: 12px; }
+.sqland .school-input { display: flex; gap: 10px; }
+.sqland .school-input input { flex: 1; background: rgba(255, 255, 255, .10); border: 1px solid rgba(255, 255, 255, .2); border-radius: 12px; padding: 13px 16px; color: #fff; font-size: 15px; font-family: inherit; }
+.sqland .school-input input::placeholder { color: rgba(255, 255, 255, .55); }
+.sqland .school-input .btn { background: #fff; color: var(--green-deep); }
+.sqland .school-form .btn-block { width: 100%; margin-top: 12px; background: rgba(255, 255, 255, .16); color: #fff; border: 1px solid rgba(255, 255, 255, .22); }
+.sqland .school-form .btn-block:hover { background: rgba(255, 255, 255, .24); }
+
+/* ---------- FINAL CTA ---------- */
+.sqland .final { padding: 0 0 96px; }
+.sqland .final-card { background:
+  radial-gradient(620px 420px at 92% 8%, rgba(70, 179, 154, .32), rgba(70, 179, 154, 0) 60%),
+  linear-gradient(140deg, var(--green) 0%, var(--green-deep) 100%);
+  color: #fff; border-radius: var(--r-xl); padding: 58px 56px; box-shadow: var(--shadow-lg); }
+.sqland .final-badge { display: inline-flex; align-items: center; gap: 9px; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; padding: 8px 16px; font-weight: 600; font-size: 14px; }
+.sqland .final-badge .led { width: 8px; height: 8px; border-radius: 50%; background: #5fd3b6; box-shadow: 0 0 0 4px rgba(95, 211, 182, .25); }
+.sqland .final-card h2 { color: #fff; margin: 22px 0 30px; max-width: 16ch; }
+.sqland .final-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+
+/* ---------- FOOTER ---------- */
+.sqland .foot { padding: 64px 0 40px; border-top: 1px solid var(--line); }
+.sqland .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; }
+.sqland .foot p.tag { color: var(--body); font-size: 15px; line-height: 1.55; max-width: 30ch; margin: 18px 0 20px; }
+.sqland .foot .wsib { display: inline-flex; align-items: center; gap: 9px; background: var(--mint); color: var(--green-700); font-weight: 600; font-size: 14px; padding: 9px 15px; border-radius: 999px; }
+.sqland .foot .wsib svg { width: 16px; height: 16px; }
+.sqland .foot h5 { font-size: 15px; font-weight: 700; margin: 0 0 18px; color: var(--ink); }
+.sqland .foot ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 13px; }
+.sqland .foot ul a { color: var(--body); font-size: 15px; cursor: pointer; }
+.sqland .foot ul a:hover { color: var(--green); }
+.sqland .foot-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 46px; padding-top: 26px; border-top: 1px solid var(--line); }
+.sqland .foot-bottom .cc { font-size: 14px; color: var(--muted); }
+.sqland .foot-bottom .links { display: flex; gap: 26px; }
+.sqland .foot-bottom .links a { font-size: 14px; color: var(--muted); cursor: pointer; }
+.sqland .foot-bottom .links a:hover { color: var(--green); }
+
+/* initials avatar (self-contained substitute for the design's photos) */
+.sqland .ava-i, .sqland .avatar-sm.ava-i { display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-family: var(--sans); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1000px) {
+  .sqland .hero-grid { grid-template-columns: 1fr; gap: 44px; }
+  .sqland .fw-grid { grid-template-columns: 1fr; gap: 30px; }
+  .sqland .match-card { position: static; }
+  .sqland .sig-grid { grid-template-columns: 1fr; gap: 38px; }
+  .sqland .split-head { grid-template-columns: 1fr; gap: 14px; }
+  .sqland .school-card { grid-template-columns: 1fr; gap: 30px; padding: 38px 32px; }
+  .sqland .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .sqland .plans { gap: 16px; }
+}
+@media (max-width: 760px) {
+  .sqland .wrap { padding: 0 20px; }
+  .sqland .section { padding: 64px 0; }
+  .sqland .nav-seg { display: none; }
+  .sqland .steps, .sqland .tcards, .sqland .reasons { grid-template-columns: 1fr; }
+  .sqland .plans { grid-template-columns: 1fr; gap: 16px; }
+  .sqland .plan.plus { transform: none; }
+  .sqland .plan.plus:hover { transform: translateY(-3px); }
+  .sqland .tiles { grid-template-columns: repeat(3, 1fr); }
+  .sqland .strip-div { display: none; }
+  .sqland .strip-top { gap: 20px; }
+  .sqland .foot-grid { grid-template-columns: 1fr; }
+  .sqland .final-card, .sqland .school-card { padding: 32px 24px; }
+  .sqland .hero-stats { flex-wrap: wrap; gap: 16px; }
+  .sqland .hero-stats .stat + .stat { border-left: 0; padding-left: 0; }
+  .sqland .price .amt { font-size: 42px; }
+}
+@media (max-width: 520px) {
+  .sqland .wrap { padding: 0 16px; }
+  .sqland .section { padding: 52px 0; }
+  .sqland .nav-inner { height: 60px; }
+  .sqland .nav-right .login { display: none; }
+  .sqland h1 { font-size: clamp(36px, 9vw, 52px); }
+  .sqland h2 { font-size: clamp(28px, 7vw, 42px); }
+  .sqland .plan { padding: 26px 24px 24px; }
+  .sqland .hero-cta { flex-direction: column; }
+  .sqland .hero-cta .btn { width: 100%; justify-content: center; }
+  .sqland .final-cta { flex-direction: column; }
+  .sqland .final-cta .btn { width: 100%; justify-content: center; }
+  .sqland .tiles { gap: 7px; }
+  .sqland .tile { padding: 10px; }
+  .sqland .tile .t-num { font-size: 18px; }
+  .sqland .chip-unlocked { display: none; }
+  .sqland .trust { gap: 16px 20px; }
+  .sqland .biz span.bm + * { display: none; }
+  .sqland .biz { gap: 0; }
+  .sqland .foot-grid { grid-template-columns: 1fr 1fr; }
+  .sqland .foot-grid > div:first-child { grid-column: 1 / -1; }
+  .sqland .school-input { flex-direction: column; }
+  .sqland .school-input .btn { width: 100%; }
+}

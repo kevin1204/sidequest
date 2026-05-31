@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Hanken_Grotesk, Fraunces } from "next/font/google";
+import { Hanken_Grotesk, Fraunces, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
+import "./sqland.css";
 import { StoreProvider } from "@/lib/store/StoreProvider";
 import { ToastHost } from "@/components/ToastHost";
 
@@ -18,6 +19,13 @@ const fraunces = Fraunces({
   axes: ["opsz"],
 });
 
+// Source Serif 4 — the display serif for the SideQuest landing redesign.
+const sourceSerif = Source_Serif_4({
+  variable: "--font-source-serif",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "SideQuest — Your career starts here.",
   description:
@@ -26,7 +34,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${hanken.variable} ${fraunces.variable}`}>
+    <html lang="en" className={`${hanken.variable} ${fraunces.variable} ${sourceSerif.variable}`}>
       <body>
         <StoreProvider>
           {children}

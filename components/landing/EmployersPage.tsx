@@ -100,8 +100,8 @@ export function EmployersPage() {
                 </div>
                 <div className="sq-hero-stat-div" />
                 <div className="sq-hero-stat">
-                  <b>$99</b>
-                  <span>flat, per placement</span>
+                  <b>$1/hr</b>
+                  <span>per placement hour, capped at $179</span>
                 </div>
                 <div className="sq-hero-stat-div" />
                 <div className="sq-hero-stat">
@@ -136,7 +136,7 @@ export function EmployersPage() {
             gold
             icon="bolt"
             title="Only pay per placement"
-            body="Free to post and review candidates. A flat $99 when you actually start someone — never a % of wages, never a subscription."
+            body="Free to post and review candidates. Just $1 per placement hour when you actually start someone — from $39, capped at $179. Never a % of wages, never a subscription."
           />
           <Benefit
             icon="layers"
@@ -249,21 +249,17 @@ export function EmployersPage() {
           <div className="emp-pay-card">
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
               <span style={{ fontWeight: 800, fontSize: 16 }}>What you pay</span>
-              <span className="tag tag-gray">Example placement</span>
+              <span className="tag tag-gray">100-hr placement</span>
             </div>
             <div className="emp-pay-row">
               <span style={{ color: "var(--ink-2)", fontWeight: 600 }}>Student wage (100% to them)</span>
-              <b className="tnum">$2,000</b>
-            </div>
-            <div className="emp-pay-row">
-              <span style={{ color: "var(--ink-2)", fontWeight: 600 }}>SideQuest placement fee</span>
-              <b className="tnum">$99</b>
+              <b className="tnum">$1,700</b>
             </div>
             <div className="emp-pay-row">
               <span style={{ color: "var(--ink-2)", fontWeight: 600 }}>
-                Payment handling <span className="hint">(of wage)</span>
+                SideQuest placement fee <span className="hint">($1/hr · from $39, capped $179)</span>
               </span>
-              <b className="tnum">~4%</b>
+              <b className="tnum">$100</b>
             </div>
             <div className="emp-pay-row">
               <span style={{ color: "var(--ink-2)", fontWeight: 600 }}>WSIB coverage</span>

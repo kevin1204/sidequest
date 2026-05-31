@@ -96,6 +96,15 @@ export const EMPLOYERS: Employer[] = [
     contact: "Grace Adeyemi",
     contactRole: "Programs Director",
   },
+  {
+    id: "e_media",
+    companyName: "Forest City Media Co.",
+    location: "Downtown",
+    field: "Business / Marketing",
+    colorTag: "#4f7fd1",
+    contact: "Elena Voss",
+    contactRole: "Marketing Manager",
+  },
 ];
 
 /* ---------- Students ---------- */
@@ -250,6 +259,25 @@ export const OPPORTUNITIES: Opportunity[] = [
     postedDaysAgo: 1,
     seedCandidateCount: 0,
     seedNewCount: 0,
+  },
+  // Forest City Media Co. — Maya's strongest match (same field, skills she has + a transferable hit)
+  {
+    id: "o_bsl",
+    employerId: "e_media",
+    title: "Brand & Social Lead",
+    description: "Own the social calendar and brand voice for a roster of London small-business clients.",
+    blurb: "Lead social + brand for local clients at a downtown studio.",
+    about:
+      "Step up into a lead role: plan campaigns, brief designers, and run community for cafés, makers and non-profits across London. A focused placement to top off your remaining hours.",
+    requiredSkills: ["Social Media", "Content Writing", "Canva", "Event Planning", "Communication"],
+    field: "Business / Marketing",
+    location: "Downtown",
+    hoursOffered: 90,
+    status: "active",
+    views: 58,
+    postedDaysAgo: 1,
+    seedCandidateCount: 7,
+    seedNewCount: 2,
   },
   // Other employers' open opportunities (Maya's matches)
   {

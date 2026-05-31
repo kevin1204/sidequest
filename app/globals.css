@@ -206,6 +206,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; color: var(-
 .shell { display: flex; min-height: 100vh; }
 .scroll-area { flex: 1; min-width: 0; }
 .container { max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+@media (max-width: 600px) { .container { padding: 0 18px; } }
 .eyebrow { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); }
 
 /* ---------- Animations ---------- */
@@ -503,6 +504,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; color: var(-
 
 /* ---------- Signature feature (teal-tinted) ---------- */
 .land-signature { background: linear-gradient(180deg, #fff, #eef6f4); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 72px 0; }
+@media (max-width: 600px) { .land-signature { padding: 44px 0; } }
 .land-sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
 .land-sig-visual { display: flex; justify-content: center; }
 @media (max-width: 880px) { .land-sig-grid { grid-template-columns: 1fr; gap: 32px; } }
@@ -710,7 +712,11 @@ input, textarea, select { font-family: inherit; font-size: inherit; color: var(-
 .sq-hero-stat-div { width: 1px; background: var(--line); align-self: stretch; }
 
 /* ---------- Section heading kit ---------- */
-.sq-section { padding: 76px 0; position: relative; }
+/* Vertical padding ONLY (longhands) — so .container's horizontal gutter
+   survives when an element carries both `container` and `sq-section`.
+   Using the `padding` shorthand here would reset left/right to 0. */
+.sq-section { padding-top: 76px; padding-bottom: 76px; position: relative; }
+@media (max-width: 600px) { .sq-section { padding-top: 44px; padding-bottom: 44px; } }
 .sq-section-tint { background: linear-gradient(180deg, #fff, var(--tl-50) 140%); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .sq-kicker { display: inline-flex; align-items: center; gap: 7px; }
 .sq-h2 { font-size: clamp(28px, 3.6vw, 42px); line-height: 1.05; margin-top: 14px; }
@@ -793,3 +799,54 @@ input, textarea, select { font-family: inherit; font-size: inherit; color: var(-
 .emp-feature-ic { width: 38px; height: 38px; border-radius: 10px; flex: none; display: grid; place-items: center; background: var(--tl-50); color: var(--primary); }
 .emp-feature-ic.gold { background: var(--gold-tint); color: var(--gold); }
 .wsib-badge { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border-radius: 999px; background: var(--green-bg); color: var(--green); border: 1px solid var(--green-line); font-weight: 700; font-size: 13px; }
+
+/* ============================================================
+   SideQuest — Dashboard upgrades (employer + student)
+   Two-column layout with a right rail, action-needed banner,
+   clickable stats, brand accents. Mobile-first.
+   ============================================================ */
+
+.page.page-wide { max-width: 1240px; }
+
+/* two-column dashboard: main + right rail */
+.dash-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; }
+@media (max-width: 1040px) { .dash-grid { grid-template-columns: 1fr; } }
+.dash-rail { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 84px; }
+@media (max-width: 1040px) { .dash-rail { position: static; } }
+
+/* clickable stat card */
+.stat-card { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; }
+.stat-card.clickable { transition: transform .16s var(--ease), box-shadow .16s var(--ease), border-color .16s var(--ease); }
+.stat-card.clickable:hover { transform: translateY(-2px); box-shadow: var(--sh-md); border-color: #d4ddd9; }
+.stat-arrow { margin-left: auto; color: var(--muted-2); opacity: 0; transition: opacity .15s, transform .15s; }
+.stat-card.clickable:hover .stat-arrow { opacity: 1; transform: translateX(2px); }
+.stat-card.alert { border-color: var(--gold-line); background: linear-gradient(135deg, var(--gold-tint), #fff 75%); }
+
+/* action-needed banner */
+.action-banner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 15px 18px; border-radius: var(--r-lg); background: linear-gradient(135deg, var(--gold-tint), #fff 78%); border: 1px solid var(--gold-line); box-shadow: var(--sh-sm); }
+.action-banner-ic { width: 42px; height: 42px; border-radius: 11px; background: #fff; color: var(--gold); display: grid; place-items: center; flex: none; box-shadow: var(--sh-xs); }
+.action-chips { display: flex; gap: 9px; flex-wrap: wrap; margin-left: auto; }
+.action-chip { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 15px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font-weight: 700; font-size: 13px; color: var(--ink-2); transition: all .15s var(--ease); }
+.action-chip:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
+.action-chip b { color: var(--gold); }
+
+/* rail cards */
+.rail-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 18px; box-shadow: var(--sh-sm); }
+.rail-card.teal { background: linear-gradient(155deg, var(--tl-700), var(--tl-600)); border: none; color: #fff; }
+.rail-head { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; margin-bottom: 14px; }
+.rail-row { display: flex; gap: 11px; padding: 10px 0; border-bottom: 1px solid var(--line-2); align-items: flex-start; }
+.rail-row:last-child { border-bottom: none; }
+.rail-pipe { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; font-size: 13.5px; }
+.rail-pipe .dot { width: 8px; height: 8px; }
+
+/* posting row top-match line */
+.posting-topmatch { display: inline-flex; align-items: center; gap: 7px; margin-top: 9px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
+
+/* legend dot contrast on the teal hours hero */
+.legend-dot { box-shadow: 0 0 0 2px rgba(255,255,255,.5); }
+
+/* gold "new" pip variant */
+.new-pip.gold { background: var(--gold); }
+
+/* dashboard section title (Fraunces) */
+.dash-title { font-size: clamp(24px, 3vw, 30px); line-height: 1.05; }

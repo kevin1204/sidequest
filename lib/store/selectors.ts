@@ -1,5 +1,5 @@
 /* ============================================================
-   TalentTie — Selectors (pure derivations over DataState)
+   SideQuest — Selectors (pure derivations over DataState)
    Everything the UI shows (scores, hours totals, matches,
    candidates, certificate eligibility) is DERIVED here, never
    stored — so any action recomputes every dependent total.
@@ -60,16 +60,12 @@ export function remainingHours(state: DataState, studentId: string): number {
   return Math.max(0, st.hoursRequired - approvedHours(state, studentId));
 }
 
-/** Skills the student has demonstrated interest in (from their placements). */
-function interestSkillsFor(state: DataState, student: Student): string[] {
-  const skills = new Set<string>();
-  for (const p of placementsForStudent(state, student.id)) {
-    const opp = getOpportunity(state, p.opportunityId);
-    opp?.requiredSkills.forEach((s) => {
-      if (student.skills.includes(s)) skills.add(s);
-    });
-  }
-  return [...skills];
+/** Required skills covered only via the student's resume-inferred transferable
+    skills (i.e. not already directly claimed). Mirrors score()'s `transfer`. */
+function transferableHaveFor(student: Student, opp: Opportunity): string[] {
+  return opp.requiredSkills.filter(
+    (s) => !student.skills.includes(s) && (student.transferableSkills ?? []).includes(s),
+  );
 }
 
 export function applicationFor(
@@ -87,9 +83,9 @@ export function buildMatch(state: DataState, student: Student, opp: Opportunity)
   const employer = employerForOpportunity(state, opp)!;
   const res = score(student, opp, {
     remainingHours: remainingHours(state, student.id),
-    interestSkills: interestSkillsFor(state, student),
   });
   const have = opp.requiredSkills.filter((s) => student.skills.includes(s));
+  const transferableHave = transferableHaveFor(student, opp);
   const app = applicationFor(state, student.id, opp.id);
   return {
     opportunity: opp,
@@ -102,6 +98,7 @@ export function buildMatch(state: DataState, student: Student, opp: Opportunity)
     dimensions: res.dimensions,
     required: opp.requiredSkills,
     have,
+    transferableHave,
     offers: opp.hoursOffered,
     sameField: student.field === opp.field,
     about: opp.about,
@@ -115,9 +112,9 @@ export function buildMatch(state: DataState, student: Student, opp: Opportunity)
 export function buildCandidate(state: DataState, student: Student, opp: Opportunity): CandidateVM {
   const res = score(student, opp, {
     remainingHours: remainingHours(state, student.id),
-    interestSkills: interestSkillsFor(state, student),
   });
   const have = opp.requiredSkills.filter((s) => student.skills.includes(s));
+  const transferableHave = transferableHaveFor(student, opp);
   const app = applicationFor(state, student.id, opp.id);
   return {
     student,
@@ -132,6 +129,7 @@ export function buildCandidate(state: DataState, student: Student, opp: Opportun
     dimensions: res.dimensions,
     required: opp.requiredSkills,
     have,
+    transferableHave,
     skills: student.skills,
     certifications: student.certifications,
     hoursLeft: remainingHours(state, student.id),
@@ -224,7 +222,6 @@ export function certificateEligible(state: DataState, studentId: string): boolea
 }
 
 export function buildCertificate(state: DataState, studentId: string): Certificate {
-  const student = getStudent(state, studentId)!;
   const breakdown = placementVMs(state, studentId)
     .filter((p) => p.approved > 0)
     .map((p) => {

@@ -1,5 +1,5 @@
 /* ============================================================
-   TalentTie — Reducer. Every action persists into shared state
+   SideQuest — Reducer. Every action persists into shared state
    (the spec's "golden rule"): Express Interest writes an
    Application both sides see; Approve Hours moves pending →
    approved so every derived total updates at once.

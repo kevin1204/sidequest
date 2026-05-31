@@ -1,5 +1,5 @@
 /* ============================================================
-   TalentTie — In-memory seed data (no real DB).
+   SideQuest — In-memory seed data (no real DB).
    Fictional but realistic London, Ontario businesses & students.
    Normalized to the spec entities; scores/reasons are NOT stored
    here — they're computed by score() in selectors.
@@ -120,6 +120,7 @@ export const STUDENTS: Student[] = [
       "Teamwork",
       "POS Systems",
     ],
+    transferableSkills: ["Communication", "CRM"],
     certifications: ["WHMIS 2015", "Smart Serve Ontario", "Google Digital Marketing"],
     hoursRequired: 400,
     profileStrength: 85,
@@ -135,6 +136,7 @@ export const STUDENTS: Student[] = [
     availability: "Flexible · 16 hrs/week",
     availabilityHours: 16,
     skills: ["Analytics", "Excel", "Social Media", "Content Writing", "CRM", "Communication"],
+    transferableSkills: ["Canva", "Teamwork"],
     certifications: ["Google Analytics", "HubSpot Inbound"],
     hoursRequired: 420,
     profileStrength: 72,
@@ -150,6 +152,7 @@ export const STUDENTS: Student[] = [
     availability: "Tue–Fri · 24 hrs/week",
     availabilityHours: 24,
     skills: ["Social Media", "Content Writing", "Canva", "Copywriting", "Photography", "Brand Design"],
+    transferableSkills: ["Customer Service", "Event Planning"],
     certifications: ["Meta Blueprint", "Smart Serve Ontario"],
     hoursRequired: 300,
     profileStrength: 78,
@@ -165,6 +168,7 @@ export const STUDENTS: Student[] = [
     availability: "Mon–Wed · 18 hrs/week",
     availabilityHours: 18,
     skills: ["Content Writing", "Social Media", "Communication", "Outreach"],
+    transferableSkills: ["Canva", "Event Planning"],
     certifications: ["WHMIS 2015"],
     hoursRequired: 240,
     profileStrength: 66,
@@ -180,6 +184,7 @@ export const STUDENTS: Student[] = [
     availability: "Wed–Sat · 20 hrs/week",
     availabilityHours: 20,
     skills: ["Canva", "Adobe Illustrator", "Brand Design", "Social Media", "Photography"],
+    transferableSkills: ["Content Writing", "Teamwork"],
     certifications: ["Adobe Certified"],
     hoursRequired: 400,
     profileStrength: 60,
@@ -455,7 +460,12 @@ export function createInitialState(): DataState {
     role: "student",
     currentStudentId: "s_maya",
     currentEmployerId: "e_thames",
-    students: STUDENTS.map((s) => ({ ...s, skills: [...s.skills], certifications: [...s.certifications] })),
+    students: STUDENTS.map((s) => ({
+      ...s,
+      skills: [...s.skills],
+      transferableSkills: [...s.transferableSkills],
+      certifications: [...s.certifications],
+    })),
     employers: EMPLOYERS.map((e) => ({ ...e })),
     opportunities: OPPORTUNITIES.map((o) => ({ ...o, requiredSkills: [...o.requiredSkills] })),
     applications: APPLICATIONS.map((a) => ({ ...a })),

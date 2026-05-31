@@ -1,12 +1,12 @@
 "use client";
 
-/* TalentTie — Completion certificate (B4), ported from certificate-page.jsx.
+/* SideQuest — Completion certificate (B4), ported from certificate-page.jsx.
    Locked until approved hours ≥ requirement; unlocks with a celebration.
    The breakdown is generated from the student's real approved placements. */
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Icon, LogoMark, PageHead } from "@/components/ui";
+import { Icon, LogoMark } from "@/components/ui";
 import { useStore } from "@/lib/store/StoreProvider";
 import { buildCertificate, certificateEligible, approvedHours, remainingHours, currentStudent } from "@/lib/store/selectors";
 import { getCompanyColor } from "@/lib/taxonomies";
@@ -22,7 +22,7 @@ function Seal() {
       <div className="cert-seal-label">
         Verified by
         <br />
-        TalentTie
+        SideQuest
       </div>
     </div>
   );
@@ -57,7 +57,7 @@ export default function CertificatePage() {
             </span>
             <h2 style={{ fontSize: 26, marginTop: 12 }}>🎉 You did it, {student.name.split(" ")[0]}.</h2>
             <p style={{ color: "var(--muted)", marginTop: 6, maxWidth: 480, marginInline: "auto" }}>
-              All {student.hoursRequired} required co-op hours are verified. Here&apos;s your official TalentTie completion
+              All {student.hoursRequired} required co-op hours are verified. Here&apos;s your official SideQuest completion
               certificate.
             </p>
           </>
@@ -82,7 +82,7 @@ export default function CertificatePage() {
             <div className="cert-doc-head">
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <LogoMark size={28} />
-                <span style={{ fontWeight: 800, fontSize: 17, letterSpacing: "-.02em" }}>TalentTie</span>
+                <span style={{ fontWeight: 800, fontSize: 17, letterSpacing: "-.02em" }}>SideQuest</span>
               </div>
               <div style={{ textAlign: "right", fontSize: 12, color: "var(--muted)", fontWeight: 600 }}>
                 Certificate of
@@ -100,7 +100,7 @@ export default function CertificatePage() {
               <p style={{ color: "var(--muted)", marginTop: 14, maxWidth: 460, marginInline: "auto", lineHeight: 1.55 }}>
                 has {eligible ? "successfully completed" : "completed so far"}{" "}
                 <b style={{ color: "var(--ink)" }}>{total} verified co-op hours</b> across {cert.breakdown.length} placements
-                with local London, Ontario businesses through the TalentTie platform.
+                with local London, Ontario businesses through the SideQuest platform.
               </p>
             </div>
 

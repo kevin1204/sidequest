@@ -1,7 +1,7 @@
 "use client";
 
 /* ============================================================
-   TalentTie — Shared in-memory store (React Context + useReducer)
+   SideQuest — Shared in-memory store (React Context + useReducer)
    Mounted once in the root layout so it survives client-side
    navigation across both the student and employer views.
    ============================================================ */

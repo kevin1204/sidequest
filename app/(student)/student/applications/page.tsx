@@ -1,6 +1,6 @@
 "use client";
 
-/* TalentTie — My Applications (B5), ported from applications.jsx.
+/* SideQuest — My Applications (B5), ported from applications.jsx.
    Mirrors the employer side: shortlist/accept there updates status here. */
 
 import React, { useState } from "react";

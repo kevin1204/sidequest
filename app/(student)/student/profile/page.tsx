@@ -1,6 +1,6 @@
 "use client";
 
-/* TalentTie — Student profile (B7), ported from student-hours.jsx.
+/* SideQuest — Student profile (B7), ported from student-hours.jsx.
    Editable required-hours field + verified-hours summary + history. */
 
 import React, { useState } from "react";

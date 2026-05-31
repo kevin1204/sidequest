@@ -1,6 +1,6 @@
 "use client";
 
-/* TalentTie — Employer Approve Hours (C5), ported from employer.jsx.
+/* SideQuest — Employer Approve Hours (C5), ported from employer.jsx.
    Approving moves a pending HourLog → approved, which recomputes the
    student's totals, progress bars and certificate eligibility everywhere. */
 

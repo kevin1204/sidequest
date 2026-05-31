@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Reference design source (raw .jsx mockups) — not part of the app build.
+    "TalentTie_design/**",
   ]),
 ]);
 

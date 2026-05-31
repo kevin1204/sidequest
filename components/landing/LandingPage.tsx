@@ -1,46 +1,18 @@
 "use client";
 
 /* ============================================================
-   TalentTie — Landing (marketing) page, ported from landing.jsx.
-   Leads with the signature multi-business hours feature.
+   SideQuest — Student landing (the default marketing page).
+   "Your degree is the main quest — this is the side quest that
+   levels you up." Leads with the signature hours-stacking feature.
    ============================================================ */
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Icon, Logo, CoTile } from "@/components/ui";
+import { Icon, CoTile } from "@/components/ui";
 import { getCompanyColor } from "@/lib/taxonomies";
-
-function useGo() {
-  const router = useRouter();
-  return (route: "landing" | "login", role?: "student" | "employer") => {
-    if (route === "landing") router.push("/");
-    else router.push(role ? `/login?role=${role}` : "/login");
-  };
-}
-
-function LandingNav() {
-  const go = useGo();
-  return (
-    <header className="land-nav">
-      <div className="container" style={{ height: 70, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Logo onClick={() => go("landing")} />
-        <nav className="land-links">
-          <a href="#how">How it works</a>
-          <a onClick={() => go("login", "student")}>For Students</a>
-          <a onClick={() => go("login", "employer")}>For Employers</a>
-        </nav>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <button className="btn btn-quiet btn-sm land-login" onClick={() => go("login")}>
-            Log in
-          </button>
-          <button className="btn btn-primary btn-sm" onClick={() => go("login")}>
-            Get started
-          </button>
-        </div>
-      </div>
-    </header>
-  );
-}
+import { MarketingNav, MarketingFooter, useGo } from "@/components/marketing/chrome";
+import { Testimonials } from "@/components/marketing/Testimonials";
+import { StudentPricing } from "@/components/marketing/StudentPricing";
+import { PartnerCheck } from "@/components/marketing/PartnerCheck";
 
 /* ---------- The star: animated hours-stacking visual ---------- */
 function StackingVisual() {
@@ -53,13 +25,9 @@ function StackingVisual() {
   const goal = 400;
   const [filled, setFilled] = useState(false);
   useEffect(() => {
-    // Fill once on mount, then settle — no looping (which read as "glitching").
+    // Fill once on mount; reduced-motion users skip the animated delay.
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      setFilled(true);
-      return;
-    }
-    const t = setTimeout(() => setFilled(true), 250);
+    const t = setTimeout(() => setFilled(true), reduce ? 0 : 250);
     return () => clearTimeout(t);
   }, []);
   const total = segs.reduce((s, x) => s + x.hours, 0);
@@ -141,21 +109,6 @@ function StepCard({ n, icon, title, body }: { n: number; icon: string; title: st
   );
 }
 
-function FooterCol({ title, links }: { title: string; links: string[] }) {
-  return (
-    <div>
-      <div style={{ fontWeight: 700, fontSize: 13.5, marginBottom: 12 }}>{title}</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-        {links.map((l) => (
-          <a key={l} style={{ color: "var(--muted)", fontSize: 13.5, cursor: "pointer" }}>
-            {l}
-          </a>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function LandingPage() {
   const go = useGo();
   const businesses = [
@@ -168,39 +121,50 @@ export function LandingPage() {
   ];
   return (
     <div style={{ background: "#fff" }}>
-      <LandingNav />
+      <MarketingNav active="students" />
 
       {/* HERO */}
-      <section className="land-hero">
+      <section className="land-hero sq-grain">
         <div aria-hidden="true" className="land-hero-bg" />
-        <div className="container" style={{ position: "relative", paddingTop: 64, paddingBottom: 56 }}>
+        <div className="container" style={{ position: "relative", paddingTop: 60, paddingBottom: 56 }}>
           <div className="land-hero-grid">
-            <div style={{ maxWidth: 560 }}>
-              <div className="land-badge">
-                <span className="dot" style={{ background: "var(--teal)" }} /> University partners coming soon — Fanshawe &amp; Western
+            <div style={{ maxWidth: 580 }}>
+              <div className="sq-quest-badge">
+                Your degree is the main quest.
+                <span className="sq-xp-pip">
+                  <Icon name="sparkle" size={11} /> +XP
+                </span>
               </div>
-              <h1 style={{ fontSize: "clamp(36px, 5vw, 56px)", lineHeight: 1.03, marginTop: 20 }}>
-                A confusing internship search, turned into a few <span style={{ color: "var(--primary)" }}>confident matches.</span>
+              <h1 className="display" style={{ fontSize: "clamp(40px, 5.4vw, 62px)", lineHeight: 1.0, marginTop: 18 }}>
+                Your career starts with <span style={{ color: "var(--primary)" }}>SideQuest.</span>
               </h1>
               <p style={{ fontSize: 18.5, color: "var(--ink-2)", marginTop: 20, lineHeight: 1.5, maxWidth: 500 }}>
-                TalentTie lets London students complete their required co-op hours across several local businesses — we total every
-                hour and issue one completion certificate.
+                Stack your required co-op hours across London&apos;s local businesses, get matched on the skills you
+                didn&apos;t know counted, and walk away with one verified completion certificate.
               </p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 28 }}>
                 <button className="btn btn-primary btn-lg" onClick={() => go("login", "student")}>
-                  <Icon name="cap" size={19} /> I&apos;m a Student
+                  <Icon name="cap" size={19} /> Start your SideQuest
                 </button>
-                <button className="btn btn-ghost btn-lg" onClick={() => go("login", "employer")}>
+                <button className="btn btn-ghost btn-lg" onClick={() => go("employers")}>
                   <Icon name="building" size={18} /> I&apos;m an Employer
                 </button>
               </div>
-              <div style={{ display: "flex", gap: 22, marginTop: 26, color: "var(--muted)", fontSize: 13.5, fontWeight: 600, flexWrap: "wrap" }}>
-                <span style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                  <Icon name="check" size={15} style={{ color: "var(--green)" }} /> Free for students
-                </span>
-                <span style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                  <Icon name="check" size={15} style={{ color: "var(--green)" }} /> Local London employers
-                </span>
+              <div className="sq-hero-stats">
+                <div className="sq-hero-stat">
+                  <b>60,000+</b>
+                  <span>students · Fanshawe &amp; Western</span>
+                </div>
+                <div className="sq-hero-stat-div" />
+                <div className="sq-hero-stat">
+                  <b>Free</b>
+                  <span>to get placed &amp; certified</span>
+                </div>
+                <div className="sq-hero-stat-div" />
+                <div className="sq-hero-stat">
+                  <b>WSIB</b>
+                  <span>covered placements</span>
+                </div>
               </div>
             </div>
             <div className="land-hero-visual">
@@ -249,20 +213,69 @@ export function LandingPage() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="container" id="how" style={{ paddingTop: 72, paddingBottom: 64 }}>
+      <section className="container sq-section" id="how">
         <div className="how-head">
           <div>
-            <div className="eyebrow">How it works</div>
-            <h2 style={{ fontSize: "clamp(28px,3.4vw,38px)", marginTop: 12 }}>Three steps to placed.</h2>
+            <span className="sq-kicker eyebrow">
+              <Icon name="layers" size={14} /> How it works
+            </span>
+            <h2 className="display sq-h2">Three steps to placed.</h2>
           </div>
-          <p style={{ color: "var(--muted)", fontSize: 16, maxWidth: 360, lineHeight: 1.55 }}>
+          <p className="sq-lede">
             Build one profile, get ranked matches, and stack hours from as many local businesses as it takes.
           </p>
         </div>
         <div className="steps-grid">
-          <StepCard n={1} icon="user" title="Build one profile" body="Add your program, skills and required hours once. Standardized so every employer reads it the same way." />
-          <StepCard n={2} icon="sparkle" title="Get ranked matches" body="See opportunities scored by skill fit, field and location — each showing exactly how many hours it offers." />
+          <StepCard n={1} icon="user" title="Build one profile" body="Add your program, skills and required hours once — or let us read them off your résumé in seconds." />
+          <StepCard n={2} icon="sparkle" title="Get ranked matches" body="See opportunities scored on real skills — including the transferable ones we surface from your experience." />
           <StepCard n={3} icon="award" title="Stack hours, get certified" body="Combine placements from several shops. We track the total and issue your completion certificate." />
+        </div>
+      </section>
+
+      {/* HOW WE MATCH — transferable skills (no numbers) */}
+      <section className="sq-section sq-section-tint">
+        <div className="container">
+          <div className="how-head">
+            <div>
+              <span className="sq-kicker eyebrow">
+                <Icon name="target" size={14} /> Our framework
+              </span>
+              <h2 className="display sq-h2">Matches you can see the reasons for.</h2>
+            </div>
+            <p className="sq-lede">
+              We weigh a few things to rank your best fits — including the experience you didn&apos;t know counted. Every
+              match shows you exactly why.
+            </p>
+          </div>
+          <div className="match-factors">
+            {(
+              [
+                ["check", "Skills you list", "The tools and abilities you're already confident in.", false],
+                [
+                  "sparkle",
+                  "Transferable skills",
+                  "The experience hiding in your résumé — a serving job that taught you teamwork, a club that taught you outreach. We surface it and count it.",
+                  true,
+                ],
+                ["target", "Your field", "Placements that fit your program and where you want to go.", false],
+                ["clock", "Your hours", "Roles sized to the co-op hours you still have left to complete.", false],
+              ] as [string, string, string, boolean][]
+            ).map(([icon, title, body, lead]) => (
+              <div key={title} className={`card card-pad hover-lift match-factor${lead ? " lead" : ""}`}>
+                <div className="match-factor-icon">
+                  <Icon name={icon} size={20} />
+                </div>
+                <h3 style={{ fontSize: 17, marginTop: 14 }}>{title}</h3>
+                <p style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.55, marginTop: 8 }}>{body}</p>
+                {lead && <span className="match-factor-tag">Our differentiator</span>}
+              </div>
+            ))}
+          </div>
+          <div className="match-transparency">
+            <Icon name="sparkle" size={16} style={{ color: "var(--primary)", flex: "none" }} />
+            Transparent matching — every opportunity shows the skills you have, the ones from your experience, and the
+            ones still to build.
+          </div>
         </div>
       </section>
 
@@ -271,13 +284,15 @@ export function LandingPage() {
         <div className="container">
           <div className="land-sig-grid">
             <div>
-              <div className="eyebrow" style={{ color: "var(--teal)" }}>
-                Signature feature
-              </div>
-              <h2 style={{ fontSize: "clamp(27px,3.2vw,40px)", marginTop: 12, lineHeight: 1.08 }}>No single shop has to take all your hours.</h2>
+              <span className="sq-kicker eyebrow" style={{ color: "var(--teal)" }}>
+                <Icon name="layers" size={14} /> Signature feature
+              </span>
+              <h2 className="display" style={{ fontSize: "clamp(27px,3.2vw,40px)", marginTop: 14, lineHeight: 1.08 }}>
+                No single shop has to take all your hours.
+              </h2>
               <p style={{ color: "var(--ink-2)", fontSize: 16.5, marginTop: 18, lineHeight: 1.55, maxWidth: 440 }}>
-                A café offers 120 hours, a marketing agency 150, a studio 100. TalentTie adds them up, tracks approvals from each
-                employer, and gets you across the line — then issues a single, verifiable certificate.
+                A café offers 120 hours, a marketing agency 150, a studio 100. SideQuest adds them up, tracks approvals
+                from each employer, and gets you across the line — then issues a single, verifiable certificate.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 22 }}>
                 {([
@@ -304,21 +319,30 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* CTA band + university badge */}
-      <section className="container" style={{ paddingTop: 64, paddingBottom: 64 }}>
-        <div className="land-cta">
+      {/* TESTIMONIALS */}
+      <Testimonials />
+
+      {/* PRICING */}
+      <StudentPricing />
+
+      {/* SCHOOL PARTNER CHECK */}
+      <PartnerCheck />
+
+      {/* CTA band */}
+      <section className="container" style={{ paddingTop: 8, paddingBottom: 72 }}>
+        <div className="land-cta sq-grain">
           <div style={{ position: "relative", zIndex: 1 }}>
             <span className="land-uni-badge">
               <span className="dot" style={{ background: "#5eead4" }} /> University partners coming soon — Fanshawe &amp; Western
             </span>
-            <h2 style={{ color: "#fff", fontSize: "clamp(26px,3vw,36px)", marginTop: 18, lineHeight: 1.1, maxWidth: 520 }}>
+            <h2 className="display" style={{ color: "#fff", fontSize: "clamp(26px,3vw,38px)", marginTop: 18, lineHeight: 1.08, maxWidth: 540 }}>
               Ready to turn your hours into a certificate?
             </h2>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 24 }}>
               <button className="btn btn-onteal btn-lg" onClick={() => go("login", "student")}>
-                <Icon name="cap" size={18} /> I&apos;m a Student
+                <Icon name="cap" size={18} /> Start your SideQuest
               </button>
-              <button className="btn btn-onteal-ghost btn-lg" onClick={() => go("login", "employer")}>
+              <button className="btn btn-onteal-ghost btn-lg" onClick={() => go("employers")}>
                 <Icon name="building" size={18} /> I&apos;m an Employer
               </button>
             </div>
@@ -326,30 +350,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer style={{ borderTop: "1px solid var(--line)", background: "#fff" }}>
-        <div className="container" style={{ paddingTop: 40, paddingBottom: 40 }}>
-          <div className="footer-grid">
-            <div style={{ maxWidth: 280 }}>
-              <Logo size={26} onClick={() => go("landing")} />
-              <p style={{ color: "var(--muted)", fontSize: 13.5, marginTop: 14, lineHeight: 1.5 }}>
-                Matching London&apos;s students with local placements. Starting in London, Ontario.
-              </p>
-            </div>
-            <FooterCol title="Product" links={["How it works", "For Students", "For Employers", "Pricing"]} />
-            <FooterCol title="Company" links={["About", "Careers", "Partners", "Contact"]} />
-            <FooterCol title="London, ON" links={["Fanshawe College", "Western University", "Downtown London", "Get in touch"]} />
-          </div>
-          <div style={{ borderTop: "1px solid var(--line)", marginTop: 32, paddingTop: 20, display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "space-between", color: "var(--muted-2)", fontSize: 13 }}>
-            <span>© 2026 TalentTie. Made in London, Ontario.</span>
-            <span style={{ display: "flex", gap: 18 }}>
-              <a>Privacy</a>
-              <a>Terms</a>
-              <a>Accessibility</a>
-            </span>
-          </div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }

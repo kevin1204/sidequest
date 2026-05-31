@@ -1,6 +1,6 @@
 "use client";
 
-/* TalentTie — Employer dashboard (C1), ported from employer.jsx. */
+/* SideQuest — Employer dashboard (C1), ported from employer.jsx. */
 
 import { useRouter } from "next/navigation";
 import { Icon, EmptyState, PageHead } from "@/components/ui";

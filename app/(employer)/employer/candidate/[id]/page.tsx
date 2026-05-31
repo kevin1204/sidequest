@@ -1,6 +1,6 @@
 "use client";
 
-/* TalentTie — Candidate detail (C4), ported from candidate-detail.jsx.
+/* SideQuest — Candidate detail (C4), ported from candidate-detail.jsx.
    Reuses the standardized profile layout; Accept creates a placement. */
 
 import React, { Suspense } from "react";
@@ -77,13 +77,17 @@ function CandidateDetailInner() {
             <p className="hint" style={{ marginBottom: 12 }}>
               How this candidate maps to your posting&apos;s required skills
             </p>
-            <SkillMatch required={c.required} have={c.have} />
+            <SkillMatch required={c.required} have={c.have} transferable={c.transferableHave} />
 
             <h3 style={{ fontSize: 16, margin: "20px 0 10px" }}>All skills</h3>
             <div className="chip-row">
               {c.skills.map((s) => (
                 <SkillChip key={s} label={s} state={haveSet.has(s) ? "have" : undefined} />
               ))}
+              {c.transferableHave.length > 0 &&
+                c.student.transferableSkills.map((s) => (
+                  <SkillChip key={`t-${s}`} label={s} state="transfer" />
+                ))}
             </div>
 
             <h3 style={{ fontSize: 16, margin: "20px 0 10px" }}>Certifications</h3>

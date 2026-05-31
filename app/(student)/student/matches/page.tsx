@@ -1,7 +1,7 @@
 "use client";
 
 /* ============================================================
-   TalentTie — Student Matches dashboard (ported from
+   SideQuest — Student Matches dashboard (ported from
    student-matches.jsx; scores/reasons computed, hours live).
    ============================================================ */
 
@@ -56,7 +56,7 @@ function MatchCard({
         <ReasonLine items={m.reasons} />
       </div>
 
-      <SkillMatch required={m.required} have={m.have} />
+      <SkillMatch required={m.required} have={m.have} transferable={m.transferableHave} />
 
       <div className="hours-pill">
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -136,7 +136,7 @@ function TopPick({
           </div>
         </div>
         <div style={{ marginTop: 16 }}>
-          <SkillMatch required={m.required} have={m.have} />
+          <SkillMatch required={m.required} have={m.have} transferable={m.transferableHave} />
         </div>
         <div className="hours-pill" style={{ marginTop: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

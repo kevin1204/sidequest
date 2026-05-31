@@ -1,7 +1,7 @@
 "use client";
 
 /* ============================================================
-   TalentTie — App shell (sidebar + top bar), ported from
+   SideQuest — App shell (sidebar + top bar), ported from
    shell.jsx and wired to the Next router + shared store.
    ============================================================ */
 

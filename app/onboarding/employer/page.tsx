@@ -1,6 +1,6 @@
 "use client";
 
-/* TalentTie — Employer onboarding wizard (ported from onboarding.jsx).
+/* SideQuest — Employer onboarding wizard (ported from onboarding.jsx).
    On finish it routes to "post your first opportunity". */
 
 import React, { useState } from "react";

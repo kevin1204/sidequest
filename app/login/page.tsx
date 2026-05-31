@@ -1,6 +1,6 @@
 "use client";
 
-/* TalentTie — Login screen (ported from auth.jsx). No real auth:
+/* SideQuest — Login screen (ported from auth.jsx). No real auth:
    pick a role, the demo account is pre-filled, "log in" routes to
    the matching dashboard and sets the role in the shared store. */
 
@@ -103,7 +103,7 @@ function LoginInner() {
               <rect x="12" y="12" width="18" height="18" rx="6" fill="#5eead4" />
               <rect x="12" y="12" width="8" height="8" rx="3" fill="#0c1322" fillOpacity="0.16" />
             </svg>
-            <span style={{ fontWeight: 800, fontSize: 19, letterSpacing: "-.03em", color: "#fff" }}>TalentTie</span>
+            <span style={{ fontWeight: 800, fontSize: 19, letterSpacing: "-.03em", color: "#fff" }}>SideQuest</span>
           </button>
         </div>
         <div style={{ position: "relative", zIndex: 2 }}>
@@ -150,7 +150,7 @@ function LoginInner() {
         </div>
         <form onSubmit={submit} className="login-form fade-up">
           <h1 style={{ fontSize: 28 }}>Welcome back</h1>
-          <p style={{ color: "var(--muted)", marginTop: 8, marginBottom: 24 }}>Log in to your TalentTie account.</p>
+          <p style={{ color: "var(--muted)", marginTop: 8, marginBottom: 24 }}>Log in to your SideQuest account.</p>
 
           <div style={{ fontSize: 13, fontWeight: 600, color: "var(--ink-2)", marginBottom: 9 }}>I am a…</div>
           <div style={{ display: "flex", gap: 12, marginBottom: 22 }}>
@@ -182,7 +182,7 @@ function LoginInner() {
           </div>
 
           <p style={{ textAlign: "center", marginTop: 22, color: "var(--muted)", fontSize: 13.5 }}>
-            New to TalentTie?{" "}
+            New to SideQuest?{" "}
             <a
               style={{ color: "var(--primary)", fontWeight: 600, cursor: "pointer" }}
               onClick={() => router.push(role === "student" ? "/onboarding/student" : "/onboarding/employer")}

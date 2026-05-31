@@ -1,6 +1,6 @@
 "use client";
 
-/* TalentTie — My Hours / tracker (B3), ported from student-hours.jsx.
+/* SideQuest — My Hours / tracker (B3), ported from student-hours.jsx.
    Log hours → pending HourLog; employer approval flows back into these
    totals and the certificate donut. */
 

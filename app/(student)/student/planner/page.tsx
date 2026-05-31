@@ -1,6 +1,6 @@
 "use client";
 
-/* TalentTie — Complete-my-hours planner (B6), ported from planner.jsx.
+/* SideQuest — Complete-my-hours planner (B6), ported from planner.jsx.
    The signature differentiator: given the student's REMAINING hours, it
    computes combinations of London placements that add up to the goal,
    then one-tap expresses interest in the whole stack. */
@@ -176,7 +176,7 @@ export default function PlannerPage() {
       <PageHead
         kicker="Complete my hours"
         title="Your smart plan to the finish line"
-        sub="TalentTie looks at your remaining hours and suggests combinations of London placements that add up to your goal."
+        sub="SideQuest looks at your remaining hours and suggests combinations of London placements that add up to your goal."
       />
 
       <div className="planner-hero">

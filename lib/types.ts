@@ -1,5 +1,5 @@
 /* ============================================================
-   TalentTie — Domain types (normalized in-memory model)
+   SideQuest — Domain types (normalized in-memory model)
    The spec's Data Model (BUILD_SPEC.md §F) — no real DB.
    ============================================================ */
 
@@ -31,6 +31,9 @@ export interface Student {
   availability: string; // human label, e.g. "Mon–Thu · 20 hrs/week"
   availabilityHours: number; // weekly hours, used for scoring
   skills: string[];
+  /** AI-inferred from a resume and student-confirmed. Canonical taxonomy values,
+      kept disjoint from `skills` — a skill the student also claims counts as claimed, not transferable. */
+  transferableSkills: string[];
   certifications: string[];
   hoursRequired: number;
   profileStrength: number; // 0–100
@@ -132,11 +135,10 @@ export interface ScoreResult {
   reasons: string[];
   /** raw dimension scores 0–1, for the detail-page breakdown */
   dimensions: {
-    skills: number;
+    skills: number; // claimed skills (full credit)
+    transferable: number; // resume-inferred skills (counted separately at a lower weight)
     field: number;
     hours: number;
-    location: number;
-    preferences: number;
   };
 }
 
@@ -151,7 +153,8 @@ export interface MatchVM {
   reasons: string[];
   dimensions: ScoreResult["dimensions"];
   required: string[];
-  have: string[];
+  have: string[]; // required skills the student directly claims
+  transferableHave: string[]; // required skills covered only via resume-inferred transferable skills
   offers: number;
   sameField: boolean;
   about: string;
@@ -173,7 +176,8 @@ export interface CandidateVM {
   reasons: string[];
   dimensions: ScoreResult["dimensions"];
   required: string[];
-  have: string[];
+  have: string[]; // required skills the candidate directly claims
+  transferableHave: string[]; // required skills covered only via resume-inferred transferable skills
   skills: string[];
   certifications: string[];
   hoursLeft: number;
@@ -194,4 +198,35 @@ export interface PlacementVM {
   started: string;
   colorTag: string;
   logs: HourLog[];
+}
+
+/* ---------- Resume extraction (the AI/parse contract) ----------
+   What the resume parser returns. `skill` MUST be a SKILL_LIBRARY value
+   (a real Claude call enforces this with an enum; the simulated extractor
+   only emits taxonomy values). Explicit = stated on the resume; transferable
+   = implied by experience the student wouldn't think to list. */
+export type ExtractedConfidence = "high" | "medium" | "low";
+
+export interface ExtractedSkill {
+  skill: string; // canonical SKILL_LIBRARY value
+  kind: "explicit" | "transferable";
+  confidence: ExtractedConfidence;
+  evidence: string; // the exact resume phrase that justifies it
+}
+
+export interface ResumeExtraction {
+  profile: {
+    name?: string;
+    school?: string; // from SCHOOLS
+    program?: string; // from PROGRAMS
+    field?: Field;
+    year?: string; // from YEARS
+    availability?: string;
+    availabilityHours?: number;
+    hoursRequired?: number;
+  };
+  explicitSkills: ExtractedSkill[];
+  transferableSkills: ExtractedSkill[];
+  certifications: string[]; // matched to CERT_OPTIONS
+  notes?: string;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-/* TalentTie — Employer: Post an Opportunity (C2), ported from employer-post.jsx.
+/* SideQuest — Employer: Post an Opportunity (C2), ported from employer-post.jsx.
    Publishing adds an Opportunity to the store that feeds the matching engine. */
 
 import React, { useState } from "react";

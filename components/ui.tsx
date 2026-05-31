@@ -1,7 +1,7 @@
 "use client";
 
 /* ============================================================
-   TalentTie — Shared UI primitives (ported from ui.jsx).
+   SideQuest — Shared UI primitives (ported from ui.jsx).
    Markup & classNames kept verbatim; converted to ESM + TS.
    ============================================================ */
 
@@ -97,7 +97,7 @@ export function Logo({ size = 30, onClick }: { size?: number; onClick?: () => vo
     <button onClick={onClick} style={{ display: "flex", alignItems: "center", gap: 10 }}>
       <LogoMark size={size} />
       <span style={{ fontWeight: 800, fontSize: size * 0.62, letterSpacing: "-.03em", color: "var(--ink)" }}>
-        Talent<span style={{ color: "var(--primary)" }}>Tie</span>
+        Side<span style={{ color: "var(--primary)" }}>Quest</span>
       </span>
     </button>
   );
@@ -123,23 +123,39 @@ export function MatchBadge({ score, large }: { score: number; large?: boolean })
   );
 }
 
-/* ---------- Skill chips ---------- */
-export function SkillChip({ label, state }: { label: string; state?: "have" | "miss" }) {
-  const cls = state === "have" ? "chip-have" : state === "miss" ? "chip-miss" : "";
+/* ---------- Skill chips ----------
+   "transfer" = covered by a resume-inferred transferable skill (sparkle, dashed teal). */
+export function SkillChip({ label, state }: { label: string; state?: "have" | "miss" | "transfer" }) {
+  const cls =
+    state === "have" ? "chip-have" : state === "transfer" ? "chip-transfer" : state === "miss" ? "chip-miss" : "";
   return (
     <span className={`chip ${cls}`}>
       {state === "have" && <Icon name="check" size={12} />}
+      {state === "transfer" && <Icon name="sparkle" size={12} />}
       {label}
     </span>
   );
 }
 
-export function SkillMatch({ required, have }: { required: string[]; have: string[] }) {
+export function SkillMatch({
+  required,
+  have,
+  transferable = [],
+}: {
+  required: string[];
+  have: string[];
+  transferable?: string[];
+}) {
   const haveSet = new Set(have);
+  const transferSet = new Set(transferable);
   return (
     <div className="chip-row">
       {required.map((s) => (
-        <SkillChip key={s} label={s} state={haveSet.has(s) ? "have" : "miss"} />
+        <SkillChip
+          key={s}
+          label={s}
+          state={haveSet.has(s) ? "have" : transferSet.has(s) ? "transfer" : "miss"}
+        />
       ))}
     </div>
   );

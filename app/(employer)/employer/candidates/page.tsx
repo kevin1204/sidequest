@@ -1,6 +1,6 @@
 "use client";
 
-/* TalentTie — Employer matched candidates (C3), ported from employer.jsx.
+/* SideQuest — Employer matched candidates (C3), ported from employer.jsx.
    Same score badge + reason format as the student side (symmetry).
    Shortlist / Accept persist and update the student's application status. */
 
@@ -50,7 +50,7 @@ function CandidateCard({
         <ReasonLine items={c.reasons} />
       </div>
 
-      <SkillMatch required={c.required} have={c.have} />
+      <SkillMatch required={c.required} have={c.have} transferable={c.transferableHave} />
 
       <div className="hours-pill">
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

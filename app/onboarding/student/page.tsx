@@ -1,13 +1,13 @@
 "use client";
 
-/* TalentTie — Student onboarding wizard (ported from onboarding.jsx).
+/* SideQuest — Student onboarding wizard (ported from onboarding.jsx).
    On finish it writes the profile onto the current student and routes
    to the matches dashboard. */
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/ui";
-import { WizardShell, ChipSelect } from "@/components/onboarding/Wizard";
+import { WizardShell, ChipSelect, ResumePrelude, type ResumeApplyPayload } from "@/components/onboarding/Wizard";
 import { useStore } from "@/lib/store/StoreProvider";
 import { PROGRAMS, SKILL_LIBRARY, CERT_OPTIONS, YEARS, SCHOOLS, fieldForProgram } from "@/lib/taxonomies";
 
@@ -21,18 +21,34 @@ function availHours(label: string): number {
 export default function StudentOnboardingPage() {
   const router = useRouter();
   const { state, dispatch, setRole } = useStore();
+  const [mode, setMode] = useState<"prelude" | "wizard">("prelude");
   const [step, setStep] = useState(1);
   const [school, setSchool] = useState<string>("Fanshawe College");
   const [program, setProgram] = useState<string>(PROGRAMS[0].name);
   const [year, setYear] = useState("Year 2");
   const [avail, setAvail] = useState("20 hrs/week");
   const [skills, setSkills] = useState<string[]>(["Social Media", "Canva"]);
+  const [transferableSkills, setTransferableSkills] = useState<string[]>([]);
   const [certs, setCerts] = useState<string[]>(["Smart Serve Ontario"]);
   const [hours, setHours] = useState(400);
   const total = 5;
 
   const toggle = (arr: string[], set: (v: string[]) => void) => (v: string) =>
     set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+
+  /** Step 0b confirm → seed the wizard, then drop into the (now pre-filled) steps. */
+  function applyResume(p: ResumeApplyPayload) {
+    if (p.school && SCHOOLS.includes(p.school as (typeof SCHOOLS)[number])) setSchool(p.school);
+    if (p.program && PROGRAMS.some((pr) => pr.name === p.program)) setProgram(p.program);
+    if (p.year && YEARS.includes(p.year)) setYear(p.year);
+    if (p.availability && AVAIL.includes(p.availability)) setAvail(p.availability);
+    if (p.hoursRequired) setHours(p.hoursRequired);
+    if (p.skills.length) setSkills(p.skills);
+    setTransferableSkills(p.transferableSkills);
+    setCerts(p.certifications);
+    setMode("wizard");
+    setStep(1);
+  }
 
   function finish() {
     dispatch({
@@ -46,12 +62,17 @@ export default function StudentOnboardingPage() {
         availability: avail,
         availabilityHours: availHours(avail),
         skills,
+        transferableSkills,
         certifications: certs,
         hoursRequired: hours,
       },
     });
     setRole("student");
     router.push("/student/matches");
+  }
+
+  if (mode === "prelude") {
+    return <ResumePrelude onSkip={() => setMode("wizard")} onApply={applyResume} />;
   }
 
   const next = () => (step < total ? setStep(step + 1) : finish());
@@ -107,7 +128,20 @@ export default function StudentOnboardingPage() {
     title = "What are your skills?";
     sub = "Pick the ones you're confident in — choose at least 3.";
     canNext = skills.length >= 3;
-    content = <ChipSelect options={SKILL_LIBRARY} selected={skills} toggle={toggle(skills, setSkills)} />;
+    content = (
+      <div>
+        <ChipSelect options={SKILL_LIBRARY} selected={skills} toggle={toggle(skills, setSkills)} />
+        {transferableSkills.length > 0 && (
+          <div className="note-box" style={{ marginTop: 16 }}>
+            <Icon name="sparkle" size={16} style={{ color: "var(--teal)", flex: "none" }} />
+            <span>
+              Plus <b>{transferableSkills.length} transferable skill{transferableSkills.length === 1 ? "" : "s"}</b> from
+              your résumé ({transferableSkills.join(", ")}) — counted in your matches at a lighter weight.
+            </span>
+          </div>
+        )}
+      </div>
+    );
   } else if (step === 4) {
     title = "Any certifications?";
     sub = "Optional, but they boost your match scores.";
@@ -136,7 +170,7 @@ export default function StudentOnboardingPage() {
         <div className="note-box" style={{ marginTop: 16 }}>
           <Icon name="layers" size={16} style={{ color: "var(--teal)", flex: "none" }} />
           <span>
-            You can complete these across several local businesses — TalentTie tracks the total and issues your certificate.
+            You can complete these across several local businesses — SideQuest tracks the total and issues your certificate.
           </span>
         </div>
       </div>

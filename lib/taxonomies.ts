@@ -1,5 +1,5 @@
 /* ============================================================
-   TalentTie — Fixed taxonomies (define once, reuse everywhere)
+   SideQuest — Fixed taxonomies (define once, reuse everywhere)
    Students PICK from these; never free-type — free text breaks
    matching (BUILD_SPEC.md §F).
    ============================================================ */

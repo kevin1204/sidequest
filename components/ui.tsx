@@ -7,6 +7,7 @@
 
 import React, { useEffect, useState } from "react";
 import { avatarGradient, initials, getCompanyColor, APP_STATUS_LABEL } from "@/lib/taxonomies";
+import { levelInfo, fmtXp } from "@/lib/xp";
 import type { ApplicationStatus } from "@/lib/types";
 
 /* ---------- Icon set (Lucide-style strokes) ---------- */
@@ -47,6 +48,10 @@ const PATHS: Record<string, string> = {
   layers: "M12 2L2 7l10 5 10-5-10-5z|M2 17l10 5 10-5|M2 12l10 5 10-5",
   heart:
     "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21l8.84-8.84a5.5 5.5 0 0 0 0-7.78z",
+  link:
+    "M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71|M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",
+  linkedin:
+    "M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z|M2 9h4v12H2z|M4 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z",
 };
 
 export function Icon({
@@ -102,12 +107,59 @@ export function Logo({ size = 30, onClick }: { size?: number; onClick?: () => vo
   );
 }
 
-/* ---------- Avatar ---------- */
-export function Avatar({ name, size = 38 }: { name: string; size?: number }) {
+/* ---------- Avatar ----------
+   Renders a real headshot when `src` is given; falls back to the
+   gradient + initials (also if the image fails to load). */
+export function Avatar({ name, size = 38, src }: { name: string; size?: number; src?: string }) {
+  const [failed, setFailed] = useState(false);
+  if (src && !failed) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        className="av"
+        src={src}
+        alt={name}
+        width={size}
+        height={size}
+        style={{ width: size, height: size, objectFit: "cover" }}
+        onError={() => setFailed(true)}
+      />
+    );
+  }
   return (
     <div className="av" style={{ width: size, height: size, background: avatarGradient(name), fontSize: size * 0.38 }}>
       {initials(name)}
     </div>
+  );
+}
+
+/* ---------- XP / level chip (gamification) ----------
+   Compact badge for the profile + dashboards. `dark` variant sits on the
+   teal hero; the default gold variant sits on white cards. */
+export function XpChip({ approved, dark = false }: { approved: number; dark?: boolean }) {
+  const { level, title, xp } = levelInfo(approved);
+  const style: React.CSSProperties = dark
+    ? { background: "rgba(255,255,255,.16)", color: "#fff", border: "1px solid rgba(255,255,255,.26)" }
+    : { background: "var(--gold-tint)", color: "var(--gold)", border: "1px solid var(--gold-line)" };
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 7,
+        height: 28,
+        padding: "0 12px",
+        borderRadius: 999,
+        fontSize: 12.5,
+        fontWeight: 800,
+        letterSpacing: "-.01em",
+        whiteSpace: "nowrap",
+        ...style,
+      }}
+    >
+      <Icon name="bolt" size={13} style={{ color: dark ? "#ffd9a0" : "var(--gold)" }} />
+      Level {level} · {title} · {fmtXp(xp)} XP
+    </span>
   );
 }
 

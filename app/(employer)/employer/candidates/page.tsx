@@ -28,7 +28,7 @@ function CandidateCard({
     <div className="match-card hover-lift">
       <div className="match-card-top">
         <button onClick={() => onOpen(c.id)} style={{ display: "flex", gap: 14, minWidth: 0, textAlign: "left", flex: 1 }}>
-          <Avatar name={c.name} size={48} />
+          <Avatar name={c.name} size={48} src={c.student.photo} />
           <div style={{ minWidth: 0 }}>
             <h3 style={{ fontSize: 17 }}>{c.name}</h3>
             <div style={{ color: "var(--ink-2)", fontSize: 13.5, fontWeight: 600, marginTop: 3 }}>{c.program}</div>
@@ -86,7 +86,7 @@ function CandidateCard({
 function CandidatesInner() {
   const router = useRouter();
   const params = useSearchParams();
-  const { state, shortlist, accept } = useStore();
+  const { state, shortlist, accept, showToast } = useStore();
 
   const postings = employerPostings(state, state.currentEmployerId).filter((p) => p.status === "active");
   const oppId = params.get("opp") || postings[0]?.id || "o_ma";
@@ -116,7 +116,7 @@ function CandidatesInner() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
           <span className="hint hide-sm">Sorted by match score</span>
-          <button className="btn btn-ghost btn-sm">
+          <button className="btn btn-ghost btn-sm" onClick={() => showToast("Advanced filters are coming soon", "filter")}>
             <Icon name="filter" size={15} /> Filters
           </button>
         </div>

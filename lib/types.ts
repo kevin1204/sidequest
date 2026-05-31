@@ -17,6 +17,19 @@ export type Field =
 export type ApplicationStatus = "interested" | "shortlisted" | "accepted" | "active";
 
 export type OpportunityStatus = "draft" | "active";
+
+/* ---------- Optional profile extras (additive — never required) ---------- */
+export interface StudentLinks {
+  portfolio?: string;
+  linkedin?: string;
+  website?: string;
+}
+
+export type DayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+export type StudentSlot = "available" | "class";
+/** A student's optional weekly availability, keyed by hour-of-day ("8".."20").
+    Each set hour = one clock hour. Absent = not available that hour. */
+export type AvailabilityGrid = Partial<Record<DayKey, Record<string, StudentSlot>>>;
 export type PlacementStatus = "active" | "complete";
 export type HourLogStatus = "pending" | "approved" | "rejected";
 
@@ -37,6 +50,10 @@ export interface Student {
   certifications: string[];
   hoursRequired: number;
   profileStrength: number; // 0–100
+  /** Optional profile extras — render only when present. */
+  links?: StudentLinks;
+  schedule?: AvailabilityGrid;
+  photo?: string; // headshot path under /public (e.g. "/people/maya.jpg")
 }
 
 export interface Employer {

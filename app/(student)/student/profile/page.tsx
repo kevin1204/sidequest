@@ -5,11 +5,23 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Icon, Avatar, SkillChip, PageHead } from "@/components/ui";
+import { Icon, Avatar, SkillChip, PageHead, XpChip } from "@/components/ui";
 import { CoTile } from "@/components/ui";
+import { WeekGrid } from "@/components/WeekGrid";
 import { useStore } from "@/lib/store/StoreProvider";
 import { currentStudent, placementVMs, approvedHours } from "@/lib/store/selectors";
 import { getCompanyColor } from "@/lib/taxonomies";
+import { scheduleIsEmpty } from "@/lib/schedule";
+import type { AvailabilityGrid } from "@/lib/types";
+
+const LABEL = { fontSize: 12, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".05em" } as const;
+
+function ensureHttp(url: string): string {
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+}
+function displayUrl(url: string): string {
+  return url.replace(/^https?:\/\//i, "").replace(/\/$/, "");
+}
 
 function ProfileField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -22,7 +34,7 @@ function ProfileField({ label, children }: { label: string; children: React.Reac
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { state, setRequiredHours } = useStore();
+  const { state, setRequiredHours, dispatch, showToast } = useStore();
   const s = currentStudent(state);
   const placements = placementVMs(state, s.id);
   const approved = approvedHours(state, s.id);
@@ -31,6 +43,27 @@ export default function ProfilePage() {
   const [editingHours, setEditingHours] = useState(false);
   const [hoursVal, setHoursVal] = useState(s.hoursRequired);
 
+  const [editLinks, setEditLinks] = useState(false);
+  const [portfolio, setPortfolio] = useState(s.links?.portfolio ?? "");
+  const [linkedin, setLinkedin] = useState(s.links?.linkedin ?? "");
+  const [editSched, setEditSched] = useState(false);
+  const [draftGrid, setDraftGrid] = useState<AvailabilityGrid>(s.schedule ?? {});
+
+  const hasLinks = !!(s.links?.portfolio || s.links?.linkedin);
+
+  function saveLinks() {
+    dispatch({
+      type: "UPDATE_STUDENT",
+      studentId: s.id,
+      patch: { links: { portfolio: portfolio.trim() || undefined, linkedin: linkedin.trim() || undefined } },
+    });
+    setEditLinks(false);
+  }
+  function saveSchedule() {
+    dispatch({ type: "UPDATE_STUDENT", studentId: s.id, patch: { schedule: draftGrid } });
+    setEditSched(false);
+  }
+
   return (
     <div className="page">
       <PageHead
@@ -38,7 +71,7 @@ export default function ProfilePage() {
         title="Your standardized profile"
         sub="Every employer reads this the same way — that's what makes matching fair and fast."
         action={
-          <button className="btn btn-ghost">
+          <button className="btn btn-ghost" onClick={() => showToast("Profile editing is coming soon", "edit")}>
             <Icon name="edit" size={16} /> Edit profile
           </button>
         }
@@ -48,12 +81,15 @@ export default function ProfilePage() {
         {/* Identity card */}
         <div className="card card-pad" style={{ display: "flex", flexDirection: "column", gap: 18 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <Avatar name={s.name} size={68} />
+            <Avatar name={s.name} size={68} src={s.photo} />
             <div>
               <h3 style={{ fontSize: 21 }}>{s.name}</h3>
               <div style={{ color: "var(--ink-2)", fontWeight: 600, fontSize: 14, marginTop: 3 }}>{s.program}</div>
               <div style={{ display: "flex", alignItems: "center", gap: 5, color: "var(--muted)", fontSize: 13, marginTop: 5 }}>
                 <Icon name="mapPin" size={13} /> {s.location}, London ON
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <XpChip approved={approved} />
               </div>
             </div>
           </div>
@@ -83,6 +119,48 @@ export default function ProfilePage() {
                 </span>
               ))}
             </div>
+          </div>
+
+          {/* Links — portfolio + LinkedIn (optional) */}
+          <div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+              <div style={LABEL}>Links</div>
+              <button
+                className="btn btn-quiet btn-sm"
+                style={{ height: 28, padding: "0 8px" }}
+                onClick={() => {
+                  setEditLinks((e) => !e);
+                  setPortfolio(s.links?.portfolio ?? "");
+                  setLinkedin(s.links?.linkedin ?? "");
+                }}
+              >
+                <Icon name="edit" size={14} /> {editLinks ? "Cancel" : hasLinks ? "Edit" : "Add"}
+              </button>
+            </div>
+            {editLinks ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <input className="input" placeholder="Portfolio or website URL" value={portfolio} onChange={(e) => setPortfolio(e.target.value)} />
+                <input className="input" placeholder="LinkedIn profile URL" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} />
+                <button className="btn btn-primary btn-sm" style={{ alignSelf: "flex-start" }} onClick={saveLinks}>
+                  Save links
+                </button>
+              </div>
+            ) : hasLinks ? (
+              <div className="profile-links">
+                {s.links?.portfolio && (
+                  <a className="profile-link" href={ensureHttp(s.links.portfolio)} target="_blank" rel="noreferrer">
+                    <Icon name="link" size={14} /> <span>{displayUrl(s.links.portfolio)}</span>
+                  </a>
+                )}
+                {s.links?.linkedin && (
+                  <a className="profile-link" href={ensureHttp(s.links.linkedin)} target="_blank" rel="noreferrer">
+                    <Icon name="linkedin" size={14} /> <span>LinkedIn</span>
+                  </a>
+                )}
+              </div>
+            ) : (
+              <p className="hint">Add a portfolio or LinkedIn so employers can see your work.</p>
+            )}
           </div>
         </div>
 
@@ -152,10 +230,51 @@ export default function ProfilePage() {
               </div>
             </div>
             <p style={{ color: "var(--ink-2)", fontSize: 13, marginTop: 12, lineHeight: 1.5 }}>
-              Add a portfolio link to reach 100% and rank higher in employer searches.
+              {hasLinks
+                ? "Nice — your links are live. Set your weekly availability to stand out even more."
+                : "Add a portfolio link to reach 100% and rank higher in employer searches."}
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Weekly availability (optional) */}
+      <div className="card card-pad" style={{ marginTop: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+          <div>
+            <h3 style={{ fontSize: 17, display: "flex", alignItems: "center", gap: 8 }}>
+              <Icon name="calendar" size={18} style={{ color: "var(--primary)" }} /> Weekly availability
+            </h3>
+            <p className="hint" style={{ marginTop: 4 }}>Optional — let employers see when you can work around class.</p>
+          </div>
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={() => {
+              setEditSched((e) => !e);
+              setDraftGrid(s.schedule ?? {});
+            }}
+          >
+            <Icon name="edit" size={14} /> {editSched ? "Cancel" : scheduleIsEmpty(s.schedule) ? "Add availability" : "Edit"}
+          </button>
+        </div>
+
+        {editSched ? (
+          <div style={{ marginTop: 16 }}>
+            <WeekGrid value={draftGrid} editable onChange={setDraftGrid} />
+            <button className="btn btn-primary btn-sm" style={{ marginTop: 16 }} onClick={saveSchedule}>
+              Save availability
+            </button>
+          </div>
+        ) : scheduleIsEmpty(s.schedule) ? (
+          <div className="note-box" style={{ marginTop: 14 }}>
+            <Icon name="calendar" size={16} style={{ color: "var(--teal)", flex: "none" }} />
+            <span>You haven&apos;t set your availability yet. Add it so employers can match you to shifts that fit around your classes.</span>
+          </div>
+        ) : (
+          <div style={{ marginTop: 16 }}>
+            <WeekGrid value={s.schedule} />
+          </div>
+        )}
       </div>
 
       {/* Verified hours summary + placement history */}

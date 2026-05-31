@@ -21,6 +21,7 @@ import type {
   DataState,
 } from "./types";
 import { COMPANY_COLORS } from "./taxonomies";
+import { hourRange } from "./schedule";
 
 /* ---------- Employers ---------- */
 export const EMPLOYERS: Employer[] = [
@@ -112,6 +113,7 @@ export const STUDENTS: Student[] = [
   {
     id: "s_maya",
     name: "Maya Thompson",
+    photo: "/people/maya.jpg",
     school: "Fanshawe College",
     program: "Business Administration – Fanshawe",
     field: "Business / Marketing",
@@ -133,10 +135,19 @@ export const STUDENTS: Student[] = [
     certifications: ["WHMIS 2015", "Smart Serve Ontario", "Google Digital Marketing"],
     hoursRequired: 400,
     profileStrength: 85,
+    links: { portfolio: "mayathompson.myportfolio.com", linkedin: "linkedin.com/in/maya-thompson" },
+    schedule: {
+      mon: { ...hourRange(8, 12, "class"), ...hourRange(13, 17) }, // class AM, free 1p–5p
+      tue: { ...hourRange(13, 20) }, // free 1p–8p
+      wed: { ...hourRange(8, 12, "class"), ...hourRange(13, 17) },
+      thu: { ...hourRange(13, 20) },
+      fri: { ...hourRange(8, 12, "class") },
+    },
   },
   {
     id: "s_liam",
     name: "Liam Chen",
+    photo: "/people/liam.jpg",
     school: "Western University",
     program: "Computer Science – Western",
     field: "Technology",
@@ -153,6 +164,7 @@ export const STUDENTS: Student[] = [
   {
     id: "s_priya",
     name: "Priya Nair",
+    photo: "/people/priya.jpg",
     school: "Fanshawe College",
     program: "Advertising & Marketing – Fanshawe",
     field: "Business / Marketing",
@@ -169,6 +181,7 @@ export const STUDENTS: Student[] = [
   {
     id: "s_jordan",
     name: "Jordan Bélanger",
+    photo: "/people/jordan.jpg",
     school: "Western University",
     program: "Media & Communications – Western",
     field: "Communications / Media",
@@ -185,6 +198,7 @@ export const STUDENTS: Student[] = [
   {
     id: "s_aanya",
     name: "Aanya Gupta",
+    photo: "/people/aanya.jpg",
     school: "Fanshawe College",
     program: "Graphic Design – Fanshawe",
     field: "Design",

@@ -94,6 +94,55 @@ const STACK = [
   { name: "Riverbend Design Co.", hrs: 30, w: 7.5, c: "var(--c-riverbend)" },
 ];
 
+/* Stacked hours bar that fills segment-by-segment on mount — the hero
+   "hours progress" moment (great for the demo GIF). Honors reduced-motion. */
+function AnimatedStackbar({ height }: { height?: number }) {
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const reduce = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const t = setTimeout(() => setOn(true), reduce ? 0 : 280);
+    return () => clearTimeout(t);
+  }, []);
+  return (
+    <div className="stackbar" style={height ? { height } : undefined}>
+      {STACK.map((s, i) => (
+        <span
+          key={s.name}
+          style={{
+            width: on ? `${s.w}%` : "0%",
+            background: s.c,
+            transition: "width .85s cubic-bezier(.22,.61,.36,1)",
+            transitionDelay: `${i * 0.18}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* Count-up for the big "400" total, synced with the bar fill. */
+function CountUp({ to, className }: { to: number; className?: string }) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    const reduce = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0;
+    let start = 0;
+    const dur = 1300;
+    const tick = (t: number) => {
+      if (!start) start = t;
+      const p = Math.min((t - start) / dur, 1);
+      setN(Math.round((1 - Math.pow(1 - p, 3)) * to));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    const delay = setTimeout(() => {
+      if (reduce) setN(to);
+      else raf = requestAnimationFrame(tick);
+    }, reduce ? 0 : 280);
+    return () => { clearTimeout(delay); cancelAnimationFrame(raf); };
+  }, [to]);
+  return <span className={className}>{n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>;
+}
+
 export function LandingPage() {
   const go = useGo();
   const [scrolled, setScrolled] = useState(false);
@@ -168,12 +217,29 @@ export function LandingPage() {
                 <div className="tile accent"><div className="t-num">100%</div><div className="t-lbl">approved &amp; verified</div></div>
               </div>
 
-              <div style={{ display: "flex", alignItems: "baseline", gap: 10, margin: "4px 0 14px" }}>
-                <span className="bignum">400</span><span className="bignum"><small>/ 400 hours</small></span>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 10, margin: "4px 0 14px", flexWrap: "wrap" }}>
+                <CountUp to={400} className="bignum" /><span className="bignum"><small>/ 400 hours</small></span>
+                <span
+                  style={{
+                    marginLeft: "auto",
+                    alignSelf: "center",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    background: "var(--cream)",
+                    color: "var(--amber-text)",
+                    fontWeight: 800,
+                    fontSize: 15,
+                    padding: "5px 13px",
+                    borderRadius: 999,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <svg width={15} height={15} viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z" /></svg>
+                  <CountUp to={4000} /> XP
+                </span>
               </div>
-              <div className="stackbar">
-                {STACK.map((s) => <span key={s.name} style={{ width: `${s.w}%`, background: s.c }} />)}
-              </div>
+              <AnimatedStackbar />
               <ul className="legend">
                 {STACK.map((s) => (
                   <li key={s.name}>
@@ -376,9 +442,7 @@ export function LandingPage() {
             <div style={{ display: "flex", alignItems: "baseline", gap: 10, margin: "22px 0 16px" }}>
               <span className="bignum">400</span><span className="bignum"><small>/ 400 hours</small></span>
             </div>
-            <div className="stackbar" style={{ height: 15 }}>
-              {STACK.map((s) => <span key={s.name} style={{ width: `${s.w}%`, background: s.c }} />)}
-            </div>
+            <AnimatedStackbar height={15} />
             <ul className="legend" style={{ marginTop: 14 }}>
               {STACK.map((s) => (
                 <li key={s.name}>

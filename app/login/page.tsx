@@ -92,7 +92,8 @@ function LoginInner() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex" }}>
+    <div className="login-page">
+      <div className="login-card">
       {/* Left brand panel */}
       <div className="login-aside">
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(700px 380px at 30% 10%, rgba(255,255,255,.16), transparent 60%)" }} />
@@ -114,7 +115,7 @@ function LoginInner() {
               ride. The certificate dropped automatically.&quot;
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16 }}>
-              <Avatar name="Maya Thompson" size={36} />
+              <Avatar name="Maya Thompson" size={36} src="/people/maya.jpg" />
               <div>
                 <div style={{ color: "#fff", fontWeight: 700, fontSize: 13.5 }}>Maya Thompson</div>
                 <div style={{ color: "rgba(255,255,255,.7)", fontSize: 12.5 }}>Business Administration · Fanshawe</div>
@@ -191,6 +192,7 @@ function LoginInner() {
             </a>
           </p>
         </form>
+      </div>
       </div>
     </div>
   );

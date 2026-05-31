@@ -19,7 +19,7 @@ function CandidatePreview() {
         <MatchBadge score={94} />
       </div>
       <div style={{ display: "flex", gap: 13, alignItems: "center" }}>
-        <Avatar name="Maya Thompson" size={46} />
+        <Avatar name="Maya Thompson" size={46} src="/people/maya.jpg" />
         <div style={{ minWidth: 0 }}>
           <div style={{ fontWeight: 700, fontSize: 15 }}>Maya Thompson</div>
           <div className="hint">Business Administration · Fanshawe</div>

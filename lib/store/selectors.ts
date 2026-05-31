@@ -250,6 +250,7 @@ export function employerPostings(state: DataState, employerId: string): Opportun
 export interface ApprovalVM {
   log: { id: string; weekRange: string; hours: number; note: string };
   studentName: string;
+  studentPhoto?: string;
   role: string;
   company: string;
 }
@@ -266,6 +267,7 @@ export function pendingApprovals(state: DataState, employerId: string): Approval
     result.push({
       log: { id: log.id, weekRange: log.weekRange, hours: log.hours, note: log.note },
       studentName: student?.name ?? "Student",
+      studentPhoto: student?.photo,
       role: opp.title,
       company: employer?.companyName ?? "",
     });

@@ -136,7 +136,7 @@ function TopBar({
 }: {
   role: Role;
   title: string;
-  who: { name: string; sub: string };
+  who: { name: string; sub: string; photo?: string };
   notifs: Notification[];
   unread: number;
   onMenu: () => void;
@@ -234,7 +234,7 @@ function TopBar({
               background: "#fff",
             }}
           >
-            <Avatar name={who.name} size={32} />
+            <Avatar name={who.name} size={32} src={who.photo} />
             <span className="hide-sm" style={{ fontWeight: 600, fontSize: 13.5 }}>
               {who.name.split(" ")[0]}
             </span>
@@ -296,8 +296,8 @@ export function AppShell({ role, children }: { role: Role; children: React.React
   const userId = role === "student" ? state.currentStudentId : state.currentEmployerId;
   const who =
     role === "student"
-      ? { name: currentStudent(state).name, sub: currentStudent(state).program }
-      : { name: currentEmployer(state).contact, sub: currentEmployer(state).companyName };
+      ? { name: currentStudent(state).name, sub: currentStudent(state).program, photo: currentStudent(state).photo }
+      : { name: currentEmployer(state).contact, sub: currentEmployer(state).companyName, photo: undefined };
   const notifs = notificationsFor(state, userId);
   const unread = unreadCount(state, userId);
   const approvals = pendingApprovals(state, state.currentEmployerId).length;

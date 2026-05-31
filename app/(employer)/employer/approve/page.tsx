@@ -22,7 +22,7 @@ function ApprovalRow({
   return (
     <div className={`card card-pad approval-row ${resolvedState ? "resolved" : ""}`}>
       <div style={{ display: "flex", gap: 13, minWidth: 0, flex: 1, alignItems: "center" }}>
-        <Avatar name={a.studentName} size={44} />
+        <Avatar name={a.studentName} size={44} src={a.studentPhoto} />
         <div style={{ minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 9, flexWrap: "wrap" }}>
             <h3 style={{ fontSize: 15.5 }}>{a.studentName}</h3>

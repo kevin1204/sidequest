@@ -17,6 +17,7 @@ import type { Opportunity } from "@/lib/types";
 
 function PostingRow({ p, topName, topScore, onView }: { p: Opportunity; topName?: string; topScore?: number; onView: () => void }) {
   const draft = p.status === "draft";
+  const { showToast } = useStore();
   return (
     <div className="card card-pad posting-row hover-lift">
       <div style={{ display: "flex", alignItems: "flex-start", gap: 14, minWidth: 0, flex: 1 }}>
@@ -83,7 +84,12 @@ function PostingRow({ p, topName, topScore, onView }: { p: Opportunity; topName?
           View candidates
           {p.seedNewCount > 0 && <span className="new-pip gold">{p.seedNewCount} new</span>}
         </button>
-        <button className="btn btn-ghost btn-sm">{draft ? "Finish & publish" : "Edit posting"}</button>
+        <button
+          className="btn btn-ghost btn-sm"
+          onClick={() => showToast(draft ? "Draft publishing is coming soon" : "Posting editor is coming soon", "edit")}
+        >
+          {draft ? "Finish & publish" : "Edit posting"}
+        </button>
       </div>
     </div>
   );

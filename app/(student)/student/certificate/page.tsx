@@ -39,6 +39,20 @@ export default function CertificatePage() {
   const left = remainingHours(state, sid);
   const total = cert.totalHours;
 
+  // Opens LinkedIn's real "Add licenses & certifications" flow, pre-filled
+  // with the SideQuest certificate — tangible to show live in the demo.
+  const shareToLinkedIn = () => {
+    const params = new URLSearchParams({
+      startTask: "CERTIFICATION_NAME",
+      name: `${student.hoursRequired}-Hour Co-op Completion Certificate`,
+      organizationName: "SideQuest",
+      issueYear: "2026",
+      issueMonth: "5",
+      certId: cert.verificationId,
+    });
+    window.open(`https://www.linkedin.com/profile/add?${params.toString()}`, "_blank", "noopener,noreferrer");
+  };
+
   const back = (
     <button className="btn btn-quiet btn-sm" onClick={() => router.push("/student/hours")} style={{ marginBottom: 14 }}>
       <Icon name="arrowLeft" size={15} /> Back to hours
@@ -167,7 +181,7 @@ export default function CertificatePage() {
               </div>
               <div>
                 <div className="cert-foot-k">Verify at</div>
-                <div className="cert-foot-v">talenttie.ca/verify</div>
+                <div className="cert-foot-v">sidequest.ca/verify</div>
               </div>
             </div>
           </div>
@@ -183,8 +197,8 @@ export default function CertificatePage() {
         <button className="btn btn-primary btn-lg" disabled={!eligible} onClick={() => window.print()}>
           <Icon name="download" size={18} /> Download PDF
         </button>
-        <button className="btn btn-ghost btn-lg" disabled={!eligible}>
-          <Icon name="users" size={17} /> Share to LinkedIn
+        <button className="btn btn-ghost btn-lg" disabled={!eligible} onClick={shareToLinkedIn}>
+          <Icon name="linkedin" size={17} /> Share to LinkedIn
         </button>
         <span className="cert-uni-note">
           <Icon name="cap" size={15} /> University-recognized — coming soon with Fanshawe &amp; Western

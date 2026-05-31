@@ -6,8 +6,17 @@
 import React, { Suspense } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { Icon, Avatar, MatchBadge, ReasonLine, SkillMatch, SkillChip, PageHead } from "@/components/ui";
+import { WeekGrid } from "@/components/WeekGrid";
 import { useStore } from "@/lib/store/StoreProvider";
 import { getStudent, getOpportunity, buildCandidate, employerPostings } from "@/lib/store/selectors";
+import { scheduleIsEmpty } from "@/lib/schedule";
+
+function ensureHttp(url: string): string {
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+}
+function displayUrl(url: string): string {
+  return url.replace(/^https?:\/\//i, "").replace(/\/$/, "");
+}
 
 function CandidateDetailInner() {
   const router = useRouter();
@@ -47,7 +56,7 @@ function CandidateDetailInner() {
           <div className="card card-pad">
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 14, flexWrap: "wrap" }}>
               <div style={{ display: "flex", gap: 16, minWidth: 0 }}>
-                <Avatar name={c.name} size={64} />
+                <Avatar name={c.name} size={64} src={c.student.photo} />
                 <div style={{ minWidth: 0 }}>
                   <h2 style={{ fontSize: 23 }}>{c.name}</h2>
                   <div style={{ color: "var(--ink-2)", fontWeight: 600, fontSize: 14.5, marginTop: 3 }}>{c.program}</div>
@@ -99,6 +108,45 @@ function CandidateDetailInner() {
               ))}
             </div>
           </div>
+
+          {(c.student.links?.portfolio || c.student.links?.linkedin || !scheduleIsEmpty(c.student.schedule)) && (
+            <div className="card card-pad">
+              {(c.student.links?.portfolio || c.student.links?.linkedin) && (
+                <>
+                  <h3 style={{ fontSize: 16, marginBottom: 10 }}>Links</h3>
+                  <div className="profile-links">
+                    {c.student.links?.portfolio && (
+                      <a className="profile-link" href={ensureHttp(c.student.links.portfolio)} target="_blank" rel="noreferrer">
+                        <Icon name="link" size={14} /> <span>{displayUrl(c.student.links.portfolio)}</span>
+                      </a>
+                    )}
+                    {c.student.links?.linkedin && (
+                      <a className="profile-link" href={ensureHttp(c.student.links.linkedin)} target="_blank" rel="noreferrer">
+                        <Icon name="linkedin" size={14} /> <span>LinkedIn</span>
+                      </a>
+                    )}
+                  </div>
+                </>
+              )}
+              {!scheduleIsEmpty(c.student.schedule) && (
+                <>
+                  <h3
+                    style={{
+                      fontSize: 16,
+                      margin: c.student.links?.portfolio || c.student.links?.linkedin ? "20px 0 6px" : "0 0 6px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <Icon name="calendar" size={17} style={{ color: "var(--primary)" }} /> Weekly availability
+                  </h3>
+                  <p className="hint" style={{ marginBottom: 12 }}>When this student can work around class.</p>
+                  <WeekGrid value={c.student.schedule} />
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="detail-rail">

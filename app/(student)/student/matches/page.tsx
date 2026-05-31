@@ -7,7 +7,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Icon, CoTile, MatchBadge, ReasonLine, SkillMatch, EmptyState } from "@/components/ui";
+import { Icon, MatchBadge, ReasonLine, SkillMatch, EmptyState, XpChip } from "@/components/ui";
+import { CompanyLogo } from "@/components/CompanyLogo";
 import { useStore } from "@/lib/store/StoreProvider";
 import {
   matchesForStudent,
@@ -46,7 +47,7 @@ function MatchCard({
     <div className="match-card hover-lift">
       <div className="match-card-top">
         <button onClick={() => onOpen(m.opportunity.id)} style={{ display: "flex", gap: 14, minWidth: 0, textAlign: "left", flex: 1 }}>
-          <CoTile name={m.company} />
+          <CompanyLogo name={m.company} />
           <div style={{ minWidth: 0 }}>
             <h3 style={{ fontSize: 17 }}>{m.role}</h3>
             <div style={{ color: "var(--ink-2)", fontSize: 14, fontWeight: 600, marginTop: 4 }}>{m.company}</div>
@@ -133,7 +134,7 @@ function TopPick({
           </span>
         </div>
         <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-          <CoTile name={m.company} size={58} radius={16} />
+          <CompanyLogo name={m.company} size={58} radius={16} />
           <div style={{ minWidth: 0 }}>
             <h3 style={{ fontSize: 22, letterSpacing: "-.02em" }}>{m.role}</h3>
             <div style={{ color: "var(--ink-2)", fontWeight: 600, fontSize: 15, marginTop: 3 }}>{m.company}</div>
@@ -209,8 +210,11 @@ function HoursHero({ onPlanner }: { onPlanner: () => void }) {
   return (
     <div className="hours-hero">
       <div className="hh-left">
-        <div style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(255,255,255,.78)", fontWeight: 600, fontSize: 13 }}>
-          <Icon name="target" size={16} /> Hours progress
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, color: "rgba(255,255,255,.78)", fontWeight: 600, fontSize: 13 }}>
+            <Icon name="target" size={16} /> Hours progress
+          </div>
+          <XpChip approved={approved} dark />
         </div>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 10, marginTop: 12, whiteSpace: "nowrap" }}>
           <span className="tnum" style={{ fontSize: 52, fontWeight: 800, color: "#fff", lineHeight: 0.9, letterSpacing: "-.03em" }}>

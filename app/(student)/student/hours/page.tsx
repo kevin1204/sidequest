@@ -4,7 +4,7 @@
    Log hours → pending HourLog; employer approval flows back into these
    totals and the certificate donut. */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon, CoTile, ProgressBar, Modal, PageHead } from "@/components/ui";
 import { useStore } from "@/lib/store/StoreProvider";
@@ -17,6 +17,7 @@ import {
   currentStudent,
 } from "@/lib/store/selectors";
 import { getCompanyColor } from "@/lib/taxonomies";
+import { levelInfo, fmtXp } from "@/lib/xp";
 import type { PlacementVM } from "@/lib/types";
 
 function LogHoursModal({
@@ -185,6 +186,75 @@ function PlacementRow({ p }: { p: PlacementVM }) {
   );
 }
 
+/* ---------- Gamified XP panel (10 XP per approved co-op hour) ---------- */
+function XpPanel({ approved }: { approved: number }) {
+  const { xp, level, title, next, toNext, pct } = levelInfo(approved);
+
+  const [on, setOn] = useState(false);
+  const [shownXp, setShownXp] = useState(0);
+  useEffect(() => {
+    const reduce = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0;
+    let start = 0;
+    const dur = 1100;
+    const tick = (t: number) => {
+      if (!start) start = t;
+      const p = Math.min((t - start) / dur, 1);
+      setShownXp(Math.round((1 - Math.pow(1 - p, 3)) * xp));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    const d = setTimeout(() => {
+      setOn(true);
+      if (reduce) setShownXp(xp);
+      else raf = requestAnimationFrame(tick);
+    }, reduce ? 0 : 220);
+    return () => { clearTimeout(d); cancelAnimationFrame(raf); };
+  }, [xp]);
+
+  return (
+    <div
+      className="card card-pad"
+      style={{
+        marginBottom: 24,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 20,
+        flexWrap: "wrap",
+        background: "linear-gradient(135deg, #fff, var(--gold-tint))",
+        borderColor: "var(--gold-line)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 16, minWidth: 0 }}>
+        <div style={{ width: 54, height: 54, borderRadius: 14, background: "#fff", color: "var(--gold)", display: "grid", placeItems: "center", border: "1px solid var(--gold-line)", flex: "none", boxShadow: "var(--sh-xs)" }}>
+          <Icon name="bolt" size={26} />
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 9, flexWrap: "wrap" }}>
+            <span style={{ fontWeight: 800, fontSize: 17 }}>Level {level} · {title}</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, height: 22, padding: "0 9px", borderRadius: 999, background: "var(--gold-tint)", color: "var(--gold)", fontSize: 11.5, fontWeight: 800, border: "1px solid var(--gold-line)" }}>
+              <Icon name="bolt" size={11} /> +10 XP / hr
+            </span>
+          </div>
+          <div className="tnum" style={{ fontWeight: 800, fontSize: 30, color: "var(--gold)", letterSpacing: "-.02em", lineHeight: 1.15, marginTop: 2 }}>
+            {fmtXp(shownXp)} XP
+          </div>
+        </div>
+      </div>
+      <div style={{ flex: "1 1 240px", minWidth: 200, maxWidth: 380 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, fontWeight: 600, color: "var(--muted)", marginBottom: 7 }}>
+          <span>{next ? `Level ${level} → ${level + 1}` : "Max level reached"}</span>
+          <span className="tnum">{next ? `${fmtXp(toNext)} XP to ${next.title}` : "Maxed out 🎉"}</span>
+        </div>
+        <div className="bar" style={{ height: 12 }}>
+          <div className="bar-seg" style={{ width: on ? `${pct}%` : "0%", background: "linear-gradient(90deg, var(--gold-2), var(--gold))", transition: "width .9s var(--ease)" }} />
+        </div>
+        <div className="hint" style={{ marginTop: 8 }}>Earn 10 XP for every approved co-op hour — logged hours level you up.</div>
+      </div>
+    </div>
+  );
+}
+
 export default function HoursPage() {
   const router = useRouter();
   const { state, logHours } = useStore();
@@ -258,6 +328,8 @@ export default function HoursPage() {
           <Icon name="award" size={16} /> {complete ? "View certificate" : "Preview certificate"}
         </button>
       </div>
+
+      <XpPanel approved={approved} />
 
       <div className="placement-list">
         {placements.map((p) => (

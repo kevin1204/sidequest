@@ -263,15 +263,25 @@ input, textarea, select { font-family: inherit; font-size: inherit; color: var(-
 .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 30px; }
 @media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; } }
 
-/* ---------- Login ---------- */
+/* ---------- Login (centered card) ---------- */
+.login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 28px; background: var(--bg); }
+.login-card {
+  display: flex; width: 100%; max-width: 1080px; min-height: 660px;
+  background: #fff; border: 1px solid var(--line); border-radius: 24px;
+  overflow: hidden; box-shadow: var(--sh-lg);
+}
 .login-aside {
-  width: 44%; max-width: 520px; background: linear-gradient(160deg, var(--tl-700), var(--tl-600) 55%, #1668c9);
-  padding: 40px; display: flex; flex-direction: column; justify-content: space-between;
+  flex: 0 0 46%; background: linear-gradient(160deg, var(--tl-700), var(--tl-600) 55%, #1668c9);
+  padding: 44px; display: flex; flex-direction: column; justify-content: space-between;
   position: relative; overflow: hidden;
 }
-.login-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 24px; position: relative; }
+.login-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 44px 40px; position: relative; }
 .login-form { width: 100%; max-width: 400px; }
-@media (max-width: 800px) { .login-aside { display: none; } }
+@media (max-width: 800px) {
+  .login-page { padding: 0; }
+  .login-card { max-width: none; min-height: 100vh; border: none; border-radius: 0; box-shadow: none; }
+  .login-aside { display: none; }
+}
 
 /* ---------- App shell ---------- */
 .appshell { display: flex; height: 100vh; overflow: hidden; background: var(--bg); }
@@ -850,3 +860,34 @@ input, textarea, select { font-family: inherit; font-size: inherit; color: var(-
 
 /* dashboard section title (Fraunces) */
 .dash-title { font-size: clamp(24px, 3vw, 30px); line-height: 1.05; }
+
+/* ============================================================
+   SideQuest — Profile links + optional weekly availability grid
+   ============================================================ */
+.profile-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.profile-link { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 14px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--line); font-size: 13px; font-weight: 600; color: var(--ink-2); transition: all .15s var(--ease); max-width: 100%; }
+.profile-link:hover { border-color: var(--tl-300); color: var(--primary); background: var(--tl-50); }
+.profile-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.weekgrid-scroll { overflow-x: auto; padding-bottom: 6px; }
+.weekgrid {
+  display: grid;
+  grid-template-columns: 42px repeat(var(--cols, 13), 34px);
+  grid-auto-rows: 34px;
+  gap: 4px;
+  width: max-content;            /* scroll horizontally on small screens instead of squishing */
+}
+.weekgrid-corner { position: sticky; left: 0; background: #fff; z-index: 2; }
+.weekgrid-colhead { font-size: 10.5px; font-weight: 700; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+.weekgrid-total { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--primary); }
+.weekgrid-total svg { width: 13px; height: 13px; }
+.weekgrid-rowhead { font-size: 12.5px; font-weight: 700; color: var(--ink-2); display: flex; align-items: center; position: sticky; left: 0; background: #fff; z-index: 2; padding-right: 4px; }
+.weekgrid-cell { width: 100%; height: 100%; border-radius: 7px; border: 1.5px solid var(--line); background: #fff; display: flex; align-items: center; justify-content: center; color: var(--primary); transition: all .12s var(--ease); padding: 0; }
+.weekgrid-cell svg { width: 13px; height: 13px; }
+.weekgrid-cell.editable { cursor: pointer; }
+.weekgrid-cell.editable:hover { border-color: var(--tl-300); background: var(--tl-50); }
+.weekgrid-cell.available { background: var(--tl-500); border-color: var(--tl-600); color: #fff; }
+.weekgrid-cell.class { background: var(--bg-2); border-color: var(--line); border-style: dashed; }
+.weekgrid-legend { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin-top: 14px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.weekgrid-legend > span { display: inline-flex; align-items: center; gap: 7px; }
+.weekgrid-legend .dot { width: 13px; height: 13px; border-radius: 4px; }
